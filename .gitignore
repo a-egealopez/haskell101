@@ -1,0 +1,29 @@
+# ======================
+# Visual Studio Code
+# ======================
+.vscode/
+.history/
+*.code-workspace
+
+# ======================
+# Haskell (GHC, Stack, Cabal)
+# ======================
+dist/
+dist-newstyle/
+.cabal-sandbox/
+.stack-work/
+*.hi
+*.o
+*.exe
+*.out
+*.app
+*.dll
+
+# ======================
+# Archivos temporales / de compilación
+# ======================
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
