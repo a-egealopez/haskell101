@@ -1,0 +1,219 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,top=4cm,bottom=4cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[spanish]{babel}	
+\usepackage{libertinus}		
+\usepackage{inconsolata}	
+\usepackage{amsthm,amsmath,amsfonts,derivative,cancel}
+\usepackage{tikz,graphicx,titling,fancyhdr,framed} 
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{changepage}
+\usepackage{standalone}
+
+\newtheorem{exercise}{Ejercicio}
+\newtheorem{solution}{Solución}
+
+\lstdefinestyle{plaintextstyle}{ 
+  basicstyle=\footnotesize,        % Fija el tamaño del tipo de letra utilizado para el código
+  breakatwhitespace=false,         % Activarlo para que los saltos automáticos solo se apliquen en los espacios en blanco
+  breaklines=true,                 % Activa el salto de línea automático
+  captionpos=b,                    % Establece la posición de la leyenda del cuadro de código
+  extendedchars=true,              % Permite utilizar caracteres extendidos no-ASCII; solo funciona para codificaciones de 8-bits; para UTF-8 no funciona. En xelatex necesita estar a true para que funcione.
+  frame=single,	                   % Añade un marco al código
+  keepspaces=true,                 % Mantiene los espacios en el texto. Es útil para mantener la indentación del código(puede necesitar columns=flexible).
+  numbers=left,                    % Posición de los números de línea (none, left, right).
+  numbersep=10pt,                   % Distancia de los números de línea al código
+  numberstyle=\small\color{black}, % Estilo para los números de línea
+  rulecolor=\color{black},         % Si no se activa, el color del marco puede cambiar en los saltos de línea entre textos que sea de otro color, por ejemplo, los comentarios, que están en verde en este ejemplo
+  showspaces=false,                % Si se activa, muestra los espacios con guiones bajos; sustituye a 'showstringspaces'
+  showstringspaces=false,          % subraya solamente los espacios que estén en una cadena de esto
+  showtabs=false,                  % muestra las tabulaciones que existan en cadenas de texto con guión bajo
+  stepnumber=1,                    % Muestra solamente los números de línea que corresponden a cada salto. En este caso: 1,3,5,...
+  tabsize=2,	                   % Establece el salto de las tabulaciones a 2 espacios
+  title=\lstname,                  % muestra el nombre de los ficheros incluidos al utilizar \lstinputlisting; también se puede utilizar en el parámetro caption
+}
+
+\lstdefinestyle{cppstyle}{ 
+  language=C++, 
+  basicstyle=\ttfamily\small,       % Fuente monoespaciada pequeña
+  keywordstyle=\bfseries\color{teal},        % Palabras clave en azul
+  commentstyle=\bfseries\color{purple},       % Comentarios en verde
+  stringstyle=\bfseries\color{olive},          % Cadenas en rojo
+  numbers=left,                     % Números de línea a la izquierda
+  numberstyle=\tiny\color{black},     % Estilo de los números de línea en rojo
+  stepnumber=1,                     % Numerar cada línea
+  numbersep=5pt,                    % Separación entre el número y el código
+  frame=single,                     % Marco alrededor del código
+  backgroundcolor=\color{white},    % Color de fondo blanco
+  showstringspaces=false,           % No mostrar espacios en las cadenas
+  tabsize=2,                        % Tamaño de tabulación
+  breaklines=true,                  % Habilitar la ruptura de líneas largas
+  breakatwhitespace=true,           % Romper líneas solo en espacios
+  rulecolor=\color{black},         % Si no se activa, el color del marco puede cambiar en los saltos de línea entre textos que sea de otro color, por ejemplo, los comentarios, que están en verde en este ejemplo
+  emph={verificar,contenida,equiparar,resolver,log,to_tab,
+        combinarEvidencias,juntar_evidencias_hasta,combinarReglaEvidencia,
+        juntar_reglas_hasta,anadir_meta,to_decimal},  % Funciones específicas a resaltar
+  emphstyle=\bfseries\color{violet}           % Estilo para funciones en violeta
+}
+
+\title{Lógica y Programación}
+\author{Alejandro Egea López}
+\date{\today}
+
+\begin{document}
+
+\pagestyle{fancy}
+\setlength{\headheight}{13pt}
+\lhead[]{Lógica Y Programación}
+\rhead[]{Curso 2025/26}
+\cfoot{\rule{\linewidth}{0.4pt} \thepage}
+
+\begin{titlepage} 
+	\centering
+	\scshape 
+	\vspace*{\baselineskip} 
+	
+	\rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt} % Thick horizontal rule
+	\rule{\textwidth}{0.4pt}
+
+	\vspace{0.75\baselineskip}
+	{\LARGE Lógica Y Programación\\}
+	\vspace{0.3\baselineskip} 
+	
+	\rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt} % Thin horizontal rule
+	\rule{\textwidth}{1.6pt}
+	
+	\vspace{2\baselineskip}
+
+	{\Large Problemas de $\lambda$-Calculus y Lógica Combinatoria} 
+	
+	\vspace{1\baselineskip}
+
+	\includegraphics[width=0.5\textwidth]{logo.png}\par
+	
+	\vspace{2\baselineskip}
+	Universidad de Granada\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large Lógica Y Programación}
+	
+	\vspace{2\baselineskip}
+	Curso\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large 5to curso}
+
+	\vspace{2\baselineskip}
+	Docente\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large Francisco Miguel García Olmedo}
+	
+	\vspace{2\baselineskip}
+	Autores\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large Alejandro Egea López \\ Nicolás Ramírez Rodiles}
+	
+	\vfill
+	A fecha de\\
+	\today
+\end{titlepage}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+% EJERCICIO 1
+\begin{exercise}[Notación de de Bruijn]
+1. Exponga y desarrolle justificadamente el tema de la ``Notación de de Bruijn''.\\
+\textbf{Pistas:} Defina índices de de Bruijn, explique la conversión de variables ligadas a índices (y viceversa), muestre reglas para renombrado (\textit{alpha-conversion}) y ejemplos resueltos. Discuta ventajas (eliminación del conflicto de nombres) y limitaciones.
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 2
+\begin{exercise}[Relación entre términos y combinadores K,S]
+Demuestre que para todo $\lambda$-término $N$, \; $\lambda x.x\,K\,N \;\vdash\; \lambda x.x\,S\,N$.\\
+(Nota: recuerde que $S\equiv\lambda xyz.xz(yz)$ y $K\equiv\lambda xy.x$.)
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 3
+\begin{exercise}[Grafo de un término]
+Dibuje razonadamente el grafo $G(W W W)$, donde $W\equiv\lambda xy.xyy$.
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 4
+\begin{exercise}[Construcción de término por grafo]
+Encuentre razonadamente un $\lambda$-término $M$ tal que $G(M)$ sea exactamente:\\
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 5
+\begin{exercise}[Punto fijo y combinadores]
+Sea el $\lambda$-término: \[ G \equiv \lambda yx:x(yx) \qquad\text{y}\qquad M \equiv (\lambda xy:y(xxy))(\lambda xy:y(xxy)).\]
+Demostrar:
+\begin{enumerate}
+\item Demuestre que $M$ es un punto fijo de $G$.
+\item Demuestre que si el combinador $N$ es un punto fijo de $G$, entonces $N$ es un operador de punto fijo.
+\item Demuestre que $M$ es un combinador de punto fijo.
+\item Demuestre que si $M$ es un combinador de punto fijo, entonces $M = GM$.
+\end{enumerate}
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 6
+\begin{exercise}[Combinador Y]
+Considere el combinador:
+\[ Y\equiv \lambda y:(\lambda x:y(xx))(\lambda x:y(xx)) \]
+y demuestre que $GY = Y$.
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 7
+\begin{exercise}[Sucesión de combinadores]
+Considere la sucesión de combinadores $\{Y_n\}_n$ definida para todo número natural $n$ como sigue:
+\[ Y_n = \begin{cases} Y, &\text{si } n=0, \\ Y_{n-1}G, &\text{si } n>0. \end{cases} \]
+Demuestre que para todo $n\ge 0$, $Y_n$ es un combinador (o la propiedad que desee demostrar — complete la afirmación según el enunciado original).
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 8
+\begin{exercise}[CL-término]
+Encuentre razonadamente el CL-término $(\lambda xy:xyy)_{CL}$.
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+\pagebreak
+% EJERCICIO 9
+\begin{exercise}[Relación entre sistemas]
+Esquematice la relación entre el sistema $\lambda$ y la lógica combinatoria.
+\begin{solution}
+
+\end{solution}
+\end{exercise}
+
+
+\end{document}

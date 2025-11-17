@@ -27,3 +27,42 @@ dist-newstyle/
 *.bak
 *.swp
 *.swo
+
+# ======================
+# LaTeX (ignorar todo lo generado excepto .tex y el pdf final)
+# ======================
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.synctex
+*.toc
+*.lof
+*.lot
+*.lol
+*.nav
+*.snm
+*.out
+*.dvi
+*.xdv
+*.pdfsync
+*.ilg
+*.idx
+*.ind
+*.ist
+*.glo
+*.gls
+*.glg
+*.acn
+*.acr
+*.alg
+*.loa
+*.lop
+*.los
+*.thm
+*.upa
+*.upb
+*.vrb
