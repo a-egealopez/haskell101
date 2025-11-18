@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper,top=4cm,bottom=4cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
-\usepackage[spanish]{babel}	
+\usepackage[spanish]{babel}
 \usepackage{libertinus}		
 \usepackage{inconsolata}	
 \usepackage{amsthm,amsmath,amsfonts,derivative,cancel}
@@ -9,10 +9,23 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{changepage}
-\usepackage{standalone}
+\usepackage{mdframed}
 
-\newtheorem{exercise}{Ejercicio}
-\newtheorem{solution}{Solución}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Esto es para los policiclos %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\input{polycycle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcounter{exercise}
+\newcommand{\exercise}{%
+  \refstepcounter{exercise}%
+  \section*{Ejercicio \theexercise}%
+}
+\newtheorem*{solution}{Solución}
 
 \lstdefinestyle{plaintextstyle}{ 
   basicstyle=\footnotesize,        % Fija el tamaño del tipo de letra utilizado para el código
@@ -123,47 +136,112 @@
 
 \pagebreak
 % EJERCICIO 1
-\begin{exercise}[Notación de de Bruijn]
-1. Exponga y desarrolle justificadamente el tema de la ``Notación de de Bruijn''.\\
-\textbf{Pistas:} Defina índices de de Bruijn, explique la conversión de variables ligadas a índices (y viceversa), muestre reglas para renombrado (\textit{alpha-conversion}) y ejemplos resueltos. Discuta ventajas (eliminación del conflicto de nombres) y limitaciones.
+\exercise 
+\noindent Exponga y desarrolle justificadamente el tema de la ``Notación de de Bruijn''.\\
 \begin{solution}
 
 \end{solution}
-\end{exercise}
 
 \pagebreak
 % EJERCICIO 2
-\begin{exercise}[Relación entre términos y combinadores K,S]
-Demuestre que para todo $\lambda$-término $N$, \; $\lambda x.x\,K\,N \;\vdash\; \lambda x.x\,S\,N$.\\
-(Nota: recuerde que $S\equiv\lambda xyz.xz(yz)$ y $K\equiv\lambda xy.x$.)
+\exercise 
+\noindent Demuestre que para todo $\lambda$-término $N$, \; $\lambda x.x\,K\,N \;\# \; \lambda x.x\,S\,N$. (Nota: Recuérdese que $S\equiv\lambda xyz.xz(yz)$ y $K\equiv\lambda xy.x$).
 \begin{solution}
-
 \end{solution}
-\end{exercise}
 
 \pagebreak
 % EJERCICIO 3
-\begin{exercise}[Grafo de un término]
-Dibuje razonadamente el grafo $G(W W W)$, donde $W\equiv\lambda xy.xyy$.
+\exercise 
+\noindent Dibuje razonadamente el grafo $G_\beta(WWW)$, donde $W\equiv\lambda xy.xyy$.
 \begin{solution}
+Primero, es interesante recordar la definición del grafo de $\beta$-conversión de un $\lambda$-término tal que 
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+El grafo de $\beta$-conversión de un $\lambda$-término T (o grafo de reducción de un $\lambda$-término T), que denotaremos por \( G_\beta(T) \), verifica:
+\begin{enumerate}
+  \item Un $\lambda$-término $M$ es un nodo de \( G_\beta(T) \) si \( \lambda \vdash T = M  \). 
+  \item Si \( M_1,M_2 \) son nodos distintos de \( G_\beta(T) \), entonces \( M_1 \not\equiv M_2 \) (en particular, admite \( M_1 =_\beta M_2 \)).
+  \item \( n\geq 1 \) aristas unen nodo \( M_1 \) a nodo \( M_2 \) (pudiendo ser \( M_1 \equiv M_2 \)) si, y solo si, \( \lambda \vdash M_1 = M_2 \)
+\end{enumerate}
+\end{mdframed}
 
 \end{solution}
-\end{exercise}
 
 \pagebreak
 % EJERCICIO 4
-\begin{exercise}[Construcción de término por grafo]
-Encuentre razonadamente un $\lambda$-término $M$ tal que $G(M)$ sea exactamente:\\
-\begin{solution}
+\exercise 
+\noindent Encuentre razonadamente un $\lambda$-término $M$ tal que $G_\beta(M)$ sea exactamente:
 
+\begin{solution}
+Sea el candidato \( M \equiv NNI \) donde \[ N \equiv \lambda xy.yyyxxy \qquad\text{e}\qquad I \equiv \lambda x.x \] y veamos que \( G_\beta(M) \) es el grafo del enunciado. Sabiendo que \( II \equiv (\lambda x.x)I = I \), tenemos que
+\begin{align*}
+  NNI & \equiv (\lambda xy.yyyxxy)NI \\
+  & = (\lambda y.yyyNNy)I \\
+  & = IIINNI \\ 
+  & = IINNI \\
+  & = INNI \\
+  & = NNI \qquad\text{(¡hemos cerrado el ciclo!)}  
+\end{align*} 
+En efecto, tenemos cinco $\lambda$-términos no iguales (en el sentido de $\equiv$). Y \( G_\beta(M) \) es
+
+\begin{center}
+\polycycle[5]{
+  $\mathrm{NNI}$,
+  $(\lambda y.yyyNNy)I$,
+  $IIINNI$,
+  $IINNI$,
+  $INNI$
+}
+\end{center}
+
+Vamos a explorar un poco más este $\lambda$-término que hemos propuesto. Presentamos las siguientes definiciones: 
+\[ N_k = \lambda xy.\underbrace{y \cdots y}_{\text{k veces}}xxy \qquad\text{y}\qquad C_{k+2}=N_k N_k I \qquad\text{para } k \in \mathbb{N} \]
+
+Así pues, estas definiciones nos conducen a plantear el siguiente lema.
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+  \begin{center}
+    \( G_\beta(C_{k+2}) \) es un grafo de reducción cíclico de \( k+2 \) nodos para todo \( k \in \mathbb{N} \).
+  \end{center}
+\end{mdframed}
+
+Por una parte, veamos el caso base \( k=0 \) tal que \( N_0=\lambda xy.xxy \) y por ende, \( C_2=N_0 N_0 I \). Tras la primera parte del ejercicio, es inmediato comprobar que \( (\lambda y.N_0 N_0 y)I = N_0 N_0 I \) se trata de \( G_\beta(C_2) \) cíclico de 2 nodos. Cabe destacar que el caso base constituye un caso \textit{degenerado}, puesto que \textit{un ciclo de dos nodos no es más que el segmento que los une}.
+
+\begin{center}
+\polycycleShort[2]{
+  $\mathrm{N_0N_0I}$,
+  $(\lambda y.N_0N_0y)I$
+}
+\end{center}
 \end{solution}
-\end{exercise}
+
+Por otra parte, veamos el caso para un $k>0$ arbitrario tal que \( N_k = \lambda xy.\underbrace{y \cdots y}_{\text{k veces}}xxy \), es decir
+\begin{align*}
+  C_{k+2} = N_k N_k I = (\lambda xy.\underbrace{y \cdots y}_{\text{k veces}}xxy) N_k I & = \\
+  & =  (\lambda y.\underbrace{y \cdots y}_{\text{k veces}}N_kN_ky) I \\
+  & = \underbrace{I \cdots I}_{\text{k veces}}N_kN_k I \\
+  & = \underbrace{I \cdots I}_{\text{k-1 veces}}N_kN_k I \\
+  & = \dots \\
+  & = I N_kN_k I \\
+  & = N_kN_kI
+\end{align*}
+
+En conclusión, es inmediato observar que hay \( k+2 \) $\lambda$-términos no iguales (en el sentido de $\equiv$) y así podemos hacer que \( G_\beta(C_{k+2}) \) sea un policiclo de cualquier número \textbf{finito} de nodos mayor o igual que 2.
+
+\begin{center}
+\polycycle[5]{
+  $\mathrm{N_kN_kI}$,
+  $(\lambda y.\underbrace{y \cdots y}_{\text{k veces}}N_kN_ky) I$,
+  $\underbrace{I \cdots I}_{\text{k veces}}N_kN_k I$,
+  $\dots$,
+  $I N_kN_k I$
+}
+\end{center}
 
 \pagebreak
 % EJERCICIO 5
-\begin{exercise}[Punto fijo y combinadores]
-Sea el $\lambda$-término: \[ G \equiv \lambda yx:x(yx) \qquad\text{y}\qquad M \equiv (\lambda xy:y(xxy))(\lambda xy:y(xxy)).\]
-Demostrar:
+\exercise 
+\noindent Sea el $\lambda$-término: \[ G \equiv \lambda yx.x(yx) \qquad\text{y}\qquad M \equiv (\lambda xy.y(xxy))(\lambda xy.y(xxy)).\]
 \begin{enumerate}
 \item Demuestre que $M$ es un punto fijo de $G$.
 \item Demuestre que si el combinador $N$ es un punto fijo de $G$, entonces $N$ es un operador de punto fijo.
@@ -171,49 +249,122 @@ Demostrar:
 \item Demuestre que si $M$ es un combinador de punto fijo, entonces $M = GM$.
 \end{enumerate}
 \begin{solution}
+\mbox{} \\
+
+\textbf{(1)} Si aplicamos el Teorema del Punto Fijo al $\lambda$-término G, sean $y$ tal que \( y \notin FV(G) \), \( W=\lambda z.G(zz) \) y \( X=WW \), entonces obtenemos que \( X = M \) es punto fijo de $G$. En efecto, 
+\begin{align*}
+  X & \equiv \\
+  & \equiv WW \\
+  & = (\lambda yx.x(yyx))(\lambda yx.x(yyx)) \qquad\text{por $(\dagger)$}\\
+  & \equiv (\lambda xy.y(xxy))(\lambda xy.y(xxy)) \qquad\text{por $\alpha$-congruencia}
+\end{align*}
+donde \((\dagger)\) resulta por
+\begin{align*}
+  W & \equiv \\
+  & \equiv \lambda y.G(yy) \\
+  & \equiv \lambda y.(\lambda yx.x(yx))(yy) \\
+  & = {\beta} \lambda y.((\lambda x.x(yx))[y:=yy]) \qquad\text{por $\beta$-conversión}\\
+  & \equiv \lambda y.\lambda x.x(yyx) \qquad\text{por sustitución (1)}\\
+  & = \lambda yx.x(yyx)
+\end{align*}
+
+\textbf{(2)} Supongamos que el combinador $N$ es un punto fijo de $G$, es decir, \( N = GN \). Por esto,
+\begin{align*}
+  N & = \\
+  & = GN \\
+  &\equiv (\lambda yx.x(yx))N \\
+  &= \lambda x.((x(yx))[y:=N]) \qquad\text{por $\beta$-conversión}\\
+  &\equiv \lambda x.x(Nx) \qquad\text{por sustitución 1}\\
+\end{align*}
+Y concluimos que, dado $F$ un $\lambda$-término,
+\begin{align*}
+  NF & = \\
+  & = (\lambda x.x(Nx))F \\
+  & = (x(Nx))[x:=F] \qquad\text{por $\beta$-conversión}\\
+  & = F(NF) \qquad\text{por sustitución 1}
+\end{align*}
+que es precisamente lo que se quería demostrar. \\
+
+\textbf{(3)} Vamos a presentar una forma inmediata de resolver el ejercicio y otra más didáctica.
+
+Por una parte, $M$ es claramente un combinador porque ninguna variable ocurra libre y, además, es punto fijo de $G$ por el apartado (1). Tenemos que verifica las hipótesis del apartado (2) y por tanto, $M$ es un operador (o combinador) de punto fijo. 
+
+Por otra parte, si denotamos por \( W:=\lambda xy.y(xxy) \) tenemos que 
+\begin{align*}
+  M & = \\
+  & \equiv WW \\
+  & \equiv (\lambda xy.y(xxy))W \\
+  & = \lambda y.((y(xxy))[x:=W]) \qquad\text{por $\beta$-conversión}\\
+  & \equiv \lambda y.y(WWy) \qquad\text{por sustitución 1}\\
+  & \equiv \lambda y.y(My) \qquad\text{denotamos por \((\dagger)\)}
+\end{align*}
+Y llegamos a que, dado $F$ un $\lambda$-término,
+\begin{align*}
+  MF & = \\
+  & = (\lambda y.y(My))F \qquad\text{por \((\ddagger)\)}\\
+  & = (y(My))[y:=F] \qquad\text{por $\beta$-conversión}\\
+  & \equiv F(MF)  \qquad\text{por sustitución 1}\\
+\end{align*}
+es decir, que $M$ es un combinador de punto fijo.\\
+
+\textbf{(4)} Supongamos que $N$ es un combinador de punto fijo, es decir, para todo $F$ $\lambda$-término \( NF=F(NF) \). Tomando el $G$ del enunciado tenemos que 
+\begin{align*}
+  GM & = \\
+  & \equiv (\lambda yx.x(yx))N \\
+  & = \lambda x.((x(yx))[y:=N]) \qquad\text{por $\beta$-conversión}\\
+  & \equiv \lambda x.x(Nx)  \qquad\text{por sustitución 1}\\
+\end{align*}
+
+Ahora bien, si tomamos \( T=GN \) llegamos a que
+\begin{align*}
+  TF = \\
+  & = GNF \qquad\text{por regla 3}\\
+  & = (\lambda x.x(Nx))F \\
+  & = (x(Nx))[x:=F] \qquad\text{por $\beta$-conversión}\\
+  & = F(NF) \qquad\text{por sustitución 1}\\
+\end{align*}
+Finalmente, aplicamos la hipótesis obteniendo que \( TF=F(NF)=NF \), y de nuevo, por la regla 3, tenemos que \( T=N \).
+
+Como partíamos de que \( T=GN \), efectivamente llegamos a que \( N=GN \), es decir, $N$ es punto fijo de $G$.
 
 \end{solution}
-\end{exercise}
+
 
 \pagebreak
 % EJERCICIO 6
-\begin{exercise}[Combinador Y]
-Considere el combinador:
-\[ Y\equiv \lambda y:(\lambda x:y(xx))(\lambda x:y(xx)) \]
+\exercise 
+\noindent Considere el combinador:
+\[ Y\equiv \lambda y.(\lambda x.y(xx))(\lambda x.y(xx)) \]
 y demuestre que $GY = Y$.
 \begin{solution}
 
 \end{solution}
-\end{exercise}
 
 \pagebreak
 % EJERCICIO 7
-\begin{exercise}[Sucesión de combinadores]
-Considere la sucesión de combinadores $\{Y_n\}_n$ definida para todo número natural $n$ como sigue:
-\[ Y_n = \begin{cases} Y, &\text{si } n=0, \\ Y_{n-1}G, &\text{si } n>0. \end{cases} \]
-Demuestre que para todo $n\ge 0$, $Y_n$ es un combinador (o la propiedad que desee demostrar — complete la afirmación según el enunciado original).
+\exercise 
+\noindent Considere la sucesión de combinadores $\{Y^n\}_n$ definida para todo número natural $n$ como sigue:
+\[ Y^n = \begin{cases} Y, &\text{si } n=0, \\ Y^{n-1}G, &\text{si } n>0. \end{cases} \]
+Demuestre que para todo $n\ge 0$, $Y^n$ es un combinador de punto fijo.
 \begin{solution}
 
 \end{solution}
-\end{exercise}
 
 \pagebreak
 % EJERCICIO 8
-\begin{exercise}[CL-término]
-Encuentre razonadamente el CL-término $(\lambda xy:xyy)_{CL}$.
+\exercise 
+\noindent Encuentre razonadamente el CL-término $(\lambda xy.xyy)_{CL}$.
 \begin{solution}
 
 \end{solution}
-\end{exercise}
 
 \pagebreak
 % EJERCICIO 9
-\begin{exercise}[Relación entre sistemas]
-Esquematice la relación entre el sistema $\lambda$ y la lógica combinatoria.
+\exercise 
+\noindent Esquematice la relación entre el sistema $\lambda$ y la lógica combinatoria.
 \begin{solution}
 
 \end{solution}
-\end{exercise}
 
 
 \end{document}

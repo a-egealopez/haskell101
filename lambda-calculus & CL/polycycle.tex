@@ -1,0 +1,33 @@
+\newcommand{\polycycle}[2][5]{
+  \begin{tikzpicture}[
+      >=Stealth,
+      node style/.style={draw, ellipse, align=center, minimum height=1cm}
+    ]
+    
+    \foreach \label [count=\i] in {#2} {
+      \node[node style] (n\i) at ({90+360/#1*(\i-1)}:3cm) {\label};
+    }
+
+    \foreach \i in {1,...,#1} {
+      \pgfmathtruncatemacro{\next}{mod(\i,#1)+1}
+      \draw[->] (n\i) -- (n\next);
+    }
+  \end{tikzpicture}%
+}
+
+\newcommand{\polycycleShort}[2][5]{
+  \begin{tikzpicture}[
+      >=Stealth,
+      node style/.style={draw, ellipse, align=center, minimum height=1cm}
+    ]
+    
+    \foreach \label [count=\i] in {#2} {
+      \node[node style] (n\i) at ({90+360/#1*(\i-1)}:1cm) {\label};
+    }
+
+    \foreach \i in {1,...,#1} {
+      \pgfmathtruncatemacro{\next}{mod(\i,#1)+1}
+      \draw[->] (n\i) -- (n\next);
+    }
+  \end{tikzpicture}%
+}
