@@ -21,9 +21,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcounter{exercise}
+\renewcommand{\thesection}{Ejercicio \arabic{exercise}}
 \newcommand{\exercise}{%
   \refstepcounter{exercise}%
-  \section*{Ejercicio \theexercise}%
+  \section{}%
 }
 \newtheorem*{solution}{Solución}
 
@@ -51,7 +52,7 @@
   language=C++, 
   basicstyle=\ttfamily\small,       % Fuente monoespaciada pequeña
   keywordstyle=\bfseries\color{teal},        % Palabras clave en azul
-  commentstyle=\bfseries\color{purple},       % Comentarios en verde
+  commentstyle=\bfseries.\color{purple},       % Comentarios en verde
   stringstyle=\bfseries\color{olive},          % Cadenas en rojo
   numbers=left,                     % Números de línea a la izquierda
   numberstyle=\tiny\color{black},     % Estilo de los números de línea en rojo
@@ -292,7 +293,7 @@ Por una parte, $M$ es claramente un combinador porque ninguna variable ocurra li
 Por otra parte, si denotamos por \( W:=\lambda xy.y(xxy) \) tenemos que 
 \begin{align*}
   M & = \\
-  & \equiv WW \\
+  & \equiv WW \\ ok :)
   & \equiv (\lambda xy.y(xxy))W \\
   & = \lambda y.((y(xxy))[x:=W]) \qquad\text{por $\beta$-conversión}\\
   & \equiv \lambda y.y(WWy) \qquad\text{por sustitución 1}\\
