@@ -50,7 +50,7 @@ heron15 a b c
       where
         nextIteration x = x - f x / df x
         
-        isCloseEnough (x1, x2) = abs $ x2 - x1 < 1e-12
+        isCloseEnough (x1, x2) = abs ( x2 - x1 ) < 1e-12
         
         nextStep (_, x2) = (x2, nextIteration x2)
 
