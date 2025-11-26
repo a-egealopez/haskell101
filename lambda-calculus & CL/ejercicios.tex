@@ -148,6 +148,16 @@
 \exercise 
 \noindent Demuestre que para todo $\lambda$-término $N$, \; $\lambda x.x\,K\,N \;\# \; \lambda x.x\,S\,N$. (Nota: Recuérdese que $S\equiv\lambda xyz.xz(yz)$ y $K\equiv\lambda xy.x$).
 \begin{solution}
+Supongamos, por reducción al absurdo, que $\lambda x.x\,K\,N = \lambda x.x\,S\,N$ y vamos a llegar a la contradicción de que $K=S$, lo cual es imposible porque \( S\#K \) por clase.\\
+
+\noindent En primer lugar, aplicamos la ``regla 3`` con \( Z=K \), de modo que 
+\[ \lambda x.x\,K\,N \; = \; \lambda x.x\,S\,N \Rightarrow (\lambda x.x\,K\,N)K \; = \; (\lambda x.x\,S\,N)K \]
+Ahora bien, aplicando ``$\beta$-conversión`` y ``sustitución 1`` obtenemos que 
+\[ (\lambda x.x\,K\,N)K = KKN \qquad \text{ y } \qquad (\lambda x.x\,S\,N)K = KSN \]
+tal que, por transitividad, obtenemos \[ KKN = KSN \]
+Finalmente, basta con aplicar la propia definición de K, concluyendo por transitividad que \[ KKN=K \qquad \text{ y } \qquad KSN = S \]
+\[ \Rightarrow K=S \]
+lo cual es una contradicción.
 \end{solution}
 
 \pagebreak
