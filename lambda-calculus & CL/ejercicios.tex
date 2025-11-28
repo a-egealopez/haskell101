@@ -156,7 +156,7 @@ La notación tradicional del cálculo $\lambda$ usa nombres para las variables l
     \item \textbf{Conversión-$\alpha$ obligatoria}: para evitar capturas debe
           renombrarse sistemáticamente las variables ligadas.
     \item \textbf{Complejidad en meta-demostraciones}: propiedades como la
-          confluencia o la prueba de Church--Rosser se complican debido a la
+          confluencia o la prueba de Church-Rosser se complican debido a la
           constante necesidad de renombrar.
 \end{enumerate}
 
@@ -393,7 +393,7 @@ Ideas centrales:
     \item reducciones múltiples para conjuntos distintos $U,V$ conmutan
           entre sí (Teorema 11.2),  
     \item todo ello conduce a una demostración pulcra del
-          \textbf{teorema de Church--Rosser} en la notación sin nombres.
+          \textbf{teorema de Church-Rosser} en la notación sin nombres.
 \end{itemize}
 
 En la notación de índices no existe la conversión-$\alpha$ ni conflictos de nombres,
@@ -407,7 +407,7 @@ La notación de de Bruijn resuelve de raíz los problemas de captura y renombrad
 sustituir nombres ligados por índices estructurales. La sustitución y la reducción
 se vuelven definiciones limpias, algebraicas y mecanizables.  
 
-La aplicación a la reducción múltiple y a la prueba de Church--Rosser muestra que la
+La aplicación a la reducción múltiple y a la prueba de Church-Rosser muestra que la
 notación no sólo simplifica cálculos locales, sino que también clarifica la teoría
 global del cálculo $\lambda$.
 
@@ -419,9 +419,9 @@ global del cálculo $\lambda$.
 \begin{solution}
 Supongamos, por reducción al absurdo, que $\lambda x.x\,K\,N = \lambda x.x\,S\,N$ y vamos a llegar a la contradicción de que $K=S$, lo cual es imposible porque \( S\#K \) por clase.\\
 
-\noindent En primer lugar, aplicamos la ``regla 3`` con \( Z=K \), de modo que 
+\noindent En primer lugar, aplicamos la ``regla 3'' con \( Z=K \), de modo que 
 \[ \lambda x.x\,K\,N \; = \; \lambda x.x\,S\,N \Rightarrow (\lambda x.x\,K\,N)K \; = \; (\lambda x.x\,S\,N)K \]
-Ahora bien, aplicando ``$\beta$-conversión`` y ``sustitución 1`` obtenemos que 
+Ahora bien, aplicando ``$\beta$-conversión'' y ``sustitución 1'' obtenemos que 
 \[ (\lambda x.x\,K\,N)K = KKN \qquad \text{ y } \qquad (\lambda x.x\,S\,N)K = KSN \]
 tal que, por transitividad, obtenemos \[ KKN = KSN \]
 Finalmente, basta con aplicar la propia definición de K, concluyendo por transitividad que \[ KKN=K \qquad \text{ y } \qquad KSN = S \]
@@ -572,7 +572,7 @@ Por una parte, $M$ es claramente un combinador porque ninguna variable ocurra li
 Por otra parte, si denotamos por \( W:=\lambda xy.y(xxy) \) tenemos que 
 \begin{align*}
   M & = \\
-  & \equiv WW \\ ok :)
+  & \equiv WW \\
   & \equiv (\lambda xy.y(xxy))W \\
   & = \lambda y.((y(xxy))[x:=W]) \qquad\text{por $\beta$-conversión}\\
   & \equiv \lambda y.y(WWy) \qquad\text{por sustitución 1}\\
@@ -656,14 +656,20 @@ Demuestre que para todo $n\ge 0$, $Y^n$ es un combinador de punto fijo.
 \bibitem{deBruijn1972}
 De Bruijn, N. G. (1972).
 \textit{Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church–Rosser theorem}.
-\textit{Indagationes Mathematicae (Proceedings), 75}(5), 381–392.
-https://doi.org/10.1016/1385-7258(72)90034-0\\
+\textit{Indagationes Mathematicae (Proceedings), 75}(5), 381--392.
+https://doi.org/10.1016/1385-7258(72)90034-0
 
-\bibitem{hindley2008-ch9}
-J.~Roger Hindley and Jonathan~P. Seldin,
-\emph{Correspondence between $\lambda$ and CL},
-in \emph{Lambda-Calculus and Combinators: An Introduction}, 2nd~ed.,
-Cambridge University Press, 2008, chapter~9, pp.~92--106.
+\bibitem{venturini1984-reduction}
+Venturini Zilli, M. (1984).
+\textit{Reduction graphs in the lambda calculus}.
+\textit{Theoretical Computer Science, 29}(3), 251--275.
+https://doi.org/10.1016/0304-3975(84)90002-1
+
+\bibitem{hindley2008-cl}
+Hindley, J. R., \& Seldin, J. P. (2008).
+\textit{Lambda-calculus and combinators: An introduction} (2nd ed.).
+Cambridge University Press.
+(Secciones relevantes: Section 2C, \textit{Abstraction in CL}, pp.~26--29; Chapter 9, \textit{Correspondence between $\lambda$ and CL}, pp.~92--106.)
 
 \end{thebibliography}
 
