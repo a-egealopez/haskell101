@@ -11,6 +11,7 @@
 \usepackage{changepage}
 \usepackage{mdframed}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Esto es para los policiclos %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,8 +141,276 @@
 \exercise 
 \noindent Exponga y desarrolle justificadamente el tema de la ``Notación de de Bruijn''.\\
 \begin{solution}
-
 \end{solution}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Introducción}
+
+La notación tradicional del cálculo $\lambda$ usa nombres para las variables ligadas
+($x,y,z,\dots$). Esta práctica introduce tres dificultades fundamentales:
+
+\begin{enumerate}
+    \item \textbf{Captura accidental}: al sustituir una expresión por una variable libre,
+          puede producirse captura si surgen colisiones de nombre con variables ligadas
+          en el contexto.
+    \item \textbf{Conversión-$\alpha$ obligatoria}: para evitar capturas debe
+          renombrarse sistemáticamente las variables ligadas.
+    \item \textbf{Complejidad en meta-demostraciones}: propiedades como la
+          confluencia o la prueba de Church--Rosser se complican debido a la
+          constante necesidad de renombrar.
+\end{enumerate}
+
+La propuesta de N.\,G. de Bruijn consiste en \emph{eliminar los nombres de variables
+ligadas} y reemplazarlos por \textbf{índices naturales} que indican cuántos ligadores
+separan la ocurrencia de su $\lambda$ correspondiente. De este modo:
+
+\begin{itemize}
+    \item desaparece por completo la conversión-$\alpha$,
+    \item no hay colisiones de nombres,
+    \item las definiciones de sustitución, reducción $\beta$ y $\eta$ se vuelven
+          puramente estructurales,
+    \item las demostraciones metateóricas se simplifican sustancialmente.
+\end{itemize}
+
+\noindent El propio de Bruijn establece tres criterios para evaluar una notación:
+\begin{enumerate}
+    \item[(i)] legibilidad humana,
+    \item[(ii)] claridad en discusión metalingüística,
+    \item[(iii)] utilidad para implementaciones automáticas.
+\end{enumerate}
+La notación de índices sacrifica parcialmente el punto (i), pero destaca en (ii) y (iii).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Name-carrying expressions y árbol sintáctico}
+
+Antes de eliminar nombres, representamos aplicaciones mediante un símbolo especial:
+\[
+A((M),(N)),
+\]
+que corresponde a la aplicación usual $MN$. Esto permite un análisis uniforme de la estructura.
+
+Consideremos ahora la siguiente expresión $\lambda$-cálculo (tomada del ejemplo del artículo):
+
+\[
+\boxed{
+\lambda x\ a(\lambda b(x,t,f(\lambda u\ a(u,t,z),\ \lambda s\ w)),w,y)
+}
+\]
+
+En forma estructurada ``name-carrying’’, cada rama del árbol lleva etiquetas $a,b,f$
+según la construcción.
+
+El artículo presenta el siguiente \textbf{árbol anotado} con \emph{reference depth} y
+\emph{level}. Los pares $(d,\ell)$ representan:
+
+\begin{itemize}
+    \item $d =$ \emph{reference depth}: número de ligadores $\lambda$ desde la
+          ocurrencia hasta su ligador,
+    \item $\ell =$ \emph{level}: número total de $\lambda$ hasta la raíz.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.35\textwidth]{tree.png}\par  
+\end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection*{Lectura precisa del árbol}
+
+Tomemos algunos nodos para ejemplificar:
+
+\begin{itemize}
+    \item El nodo $x$ tiene etiqueta $(2,2)$:
+        \begin{itemize}
+            \item reference depth $=2$: está bajo dos $\lambda$ antes de llegar a su
+                  ligador original \(\lambda_x\),
+            \item level $=2$: desde la ocurrencia hasta la raíz hay dos $\lambda$.
+        \end{itemize}
+    \item El nodo $t$ bajo $b(x,t)$ tiene $(1,2)$:
+        \begin{itemize}
+            \item depth = 1: está inmediatamente bajo $\lambda_t$,
+            \item level = 2: hay dos ligadores superiores en total.
+        \end{itemize}
+    \item El nodo $v$ etiquetado $(3,1)$ indica que:
+        \begin{itemize}
+            \item depth = 3: su ligador está tres $\lambda$ más arriba,
+            \item level = 1: solo un $\lambda$ separa esa rama de la raíz.
+        \end{itemize}
+    \item Lo mismo ocurre para $u,t,z,w$ en la rama derecha bajo $f$.
+\end{itemize}
+
+Este árbol es la base para convertir la expresión a notación sin nombres.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{De nombres a índices: notación de de Bruijn}
+
+Para cada ocurrencia ligada, sustituimos su nombre por su \emph{reference depth}.
+
+\begin{itemize}
+    \item Las variables libres se conservan en una lista ordenada
+          $(x_1,x_2,\dots)$,
+    \item Los \emph{level} sirven como información auxiliar para verificar la
+          corrección formal, pero se omiten en la expresión final.
+\end{itemize}
+
+\subsubsection*{Ejemplos simples}
+
+\[
+\lambda x.\,x \;\longmapsto\; \lambda.\,1
+\]
+
+\[
+\lambda x.\,\lambda y.\,(x\,y) \;\longmapsto\; \lambda.\,\lambda.\,(2\,1)
+\]
+
+\[
+\lambda x.\,\lambda y.\,\lambda z.\,x \;\longmapsto\; \lambda.\,\lambda.\,\lambda.\,3
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Sintaxis de expresiones sin nombres}
+
+Usamos una gramática claramente indentada:
+
+\begin{verbatim}
+<NF>         ::= <Const>
+               | <Index>
+               | <NFList>
+               | lambda.<NF>
+
+<Const>      ::= a | b | c | ...         ; constantes simbólicas
+
+<Index>      ::= 1 | 2 | 3 | ...         ; variable ligada por índice
+
+<NFList>     ::= A(<NF>, <NF>)           ; aplicación
+               | <NF> <NF>               ; concatenación de expresiones
+\end{verbatim}
+
+Esta sintaxis es extremadamente regular: ya no aparecen nombres ligados, sólo índices.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Sustitución en notación de de Bruijn}
+
+La sustitución se define como:
+
+\[
+S(Z_1,Z_2,\dots;\; Q),
+\]
+
+donde $Z_i$ sustituye a la variable libre cuyo índice es $i$.
+
+Casos fundamentales:
+
+\begin{itemize}
+    \item Si $Q$ es una constante, permanece igual.
+    \item Si $Q=k$ es un índice, entonces:
+          \[
+            S(\dots,Z_k;\;k) = Z_k,
+          \]
+          con ajuste de índices si la sustitución entra bajo una $\lambda$.
+    \item Si $Q=A((Q_1),(Q_2))$, entonces:
+          \[
+             S(Z;\,A((Q_1),(Q_2)))
+             = A((S(Z;Q_1)),(S(Z;Q_2))).
+          \]
+    \item Si $Q=\lambda.\,R$, entonces:
+          \[
+             S(Z_1,Z_2,\dots;\;\lambda.\,R)
+             = \lambda.\,S(Z'_1,Z'_2,\dots;\;R),
+          \]
+          donde cada $Z'_i$ es la versión de $Z_i$ con sus índices incrementados
+          en uno (para preservar referencias correctas).
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Reducción $\beta$}
+
+La regla de contracción $\beta$ se expresa elegantemente:
+
+\[
+A((\lambda.\,Q),(r))
+\;\longrightarrow\;
+S(r,2,3,\dots;\;Q),
+\]
+
+es decir: sustituimos el índice $1$ por $r$.
+
+\subsubsection*{Ejemplos}
+
+\[
+(\lambda x.\,x)\;a
+\quad\leadsto\quad
+\lambda.\,1\; a
+\;\longrightarrow\; a.
+\]
+
+\[
+(\lambda x.\,\lambda y.\,x)\;y
+\quad\leadsto\quad
+A((\lambda.\,\lambda.\,2),(y))
+\;\longrightarrow\;
+\lambda.\,1.
+\]
+
+En ningún momento aparece conversión-$\alpha$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Reducción $\eta$}
+
+La regla extensional:
+
+\[
+\lambda.\,A((Q),1)\;\longrightarrow\;Q
+\]
+
+siempre que $Q$ no contenga ninguna referencia al índice $1$ ligado por la $\lambda$.
+
+Ejemplo:
+
+\[
+\lambda x.\,f\,x
+\quad\longmapsto\quad
+\lambda.\,A((f),1)
+\quad\longrightarrow\quad
+f.
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Algunos comentarios sobre la reducción múltiple}
+
+De Bruijn desarrolla una teoría de \emph{reducción múltiple} $\beta_U$, donde un conjunto
+$U$ de símbolos de aplicación se reduce simultáneamente.
+
+Ideas centrales:
+
+\begin{itemize}
+    \item se define la noción de \emph{expresión $U$-correcta},  
+    \item la sustitución conserva $U$-corrección (Teorema 10.1),  
+    \item la reducción múltiple y la sustitución poseen reglas claras de
+          conmutación y composición (Teorema 11.1),  
+    \item reducciones múltiples para conjuntos distintos $U,V$ conmutan
+          entre sí (Teorema 11.2),  
+    \item todo ello conduce a una demostración pulcra del
+          \textbf{teorema de Church--Rosser} en la notación sin nombres.
+\end{itemize}
+
+En la notación de índices no existe la conversión-$\alpha$ ni conflictos de nombres,
+por lo que la demostración se vuelve más transparente: la confluencia se logra por
+propiedades puramente estructurales.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Conclusión}
+
+La notación de de Bruijn resuelve de raíz los problemas de captura y renombrado al
+sustituir nombres ligados por índices estructurales. La sustitución y la reducción
+se vuelven definiciones limpias, algebraicas y mecanizables.  
+
+La aplicación a la reducción múltiple y a la prueba de Church--Rosser muestra que la
+notación no sólo simplifica cálculos locales, sino que también clarifica la teoría
+global del cálculo $\lambda$.
+
 
 \pagebreak
 % EJERCICIO 2
@@ -376,6 +645,27 @@ Demuestre que para todo $n\ge 0$, $Y^n$ es un combinador de punto fijo.
 \begin{solution}
 
 \end{solution}
+
+
+
+
+\pagebreak
+
+\begin{thebibliography}{9}
+
+\bibitem{deBruijn1972}
+De Bruijn, N. G. (1972).
+\textit{Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church–Rosser theorem}.
+\textit{Indagationes Mathematicae (Proceedings), 75}(5), 381–392.
+https://doi.org/10.1016/1385-7258(72)90034-0\\
+
+\bibitem{hindley2008-ch9}
+J.~Roger Hindley and Jonathan~P. Seldin,
+\emph{Correspondence between $\lambda$ and CL},
+in \emph{Lambda-Calculus and Combinators: An Introduction}, 2nd~ed.,
+Cambridge University Press, 2008, chapter~9, pp.~92--106.
+
+\end{thebibliography}
 
 
 \end{document}
