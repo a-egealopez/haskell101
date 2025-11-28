@@ -635,6 +635,43 @@ Demuestre que para todo $n\ge 0$, $Y^n$ es un combinador de punto fijo.
 \exercise 
 \noindent Encuentre razonadamente el CL-término $(\lambda xy.xyy)_{CL}$.
 \begin{solution}
+En primer lugar, escribimos el $\lambda$-término como un CL-término de tipo `[x].M' (que usaremos solo permitir la conversión $\lambda \to CL$, pero que no es un CL-término en sí mismo):
+\[ (\lambda xy.xyy)_{CL} \to [xy].xyy, \]
+y, por definición de abstracción de múltiples variables, obtenemos que 
+\[ [xy].xyy \equiv [x]([y].xyy) \]
+de modo que ya podemos proceder a aplicar las reglas de abstracción (a), (b), (c), (f) (las que se requieran). A modo de recordatorio:
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+\textbf{Definition 2.18 (Abstraction).}
+Para todo término de CL llamémoslo $M$ y toda variable $x$, se define por inducción un término de CL llamado $[x].M$ del siguiente modo:
+\begin{enumerate}
+  \item[(a)] $[x].M \equiv K M$ si $x \notin FV(M)$.
+  \item[(b)] $[x].x \equiv I$.
+  \item[(c)] $[x].Ux \equiv U$ si $x \notin FV(U)$.
+  \item[(f)] $[x].UV \equiv S([x].U)([x].V)$ si no se aplica ninguna de las reglas anteriores.
+\end{enumerate}
+*Cabe destacar que la referencia prescinde de las reglas (d) y (e); y que en [x].UV usando la regla (f), V es siempre la parte derecha de la aplicación más externa del término.
+\end{mdframed}
+Vamos a operar según las reglas (*las reglas se enuncian en orden de aplicación):
+\begin{align*}
+  [x].([y].xyy) & \equiv \\
+  & \equiv [x].(S([y].xy)([y].y))  \qquad\text{por regla (f)}\\
+  & \equiv [x].(S(S([y].x)([y].y))I)  \qquad\text{por regla (f) y (b)}\\
+  & \equiv [x].(S(S(Kx)(I))I)  \qquad\text{por regla (a) y (b)}\\
+  & \equiv S([x].S(S(Kx)(I)))([x].I)  \qquad\text{por regla (f)}\\
+  & \equiv S(S([x].S)([x].(S(Kx)(I))))KI  \qquad\text{por regla (f) y (a)}\\
+  & \equiv S(S(KS)([x].(S(Kx)(I))))KI  \qquad\text{por regla (a) y (f)}\\
+  & \equiv S(S(KS)(S([x].S(Kx))([x].I)))KI  \qquad\text{por regla (f)}\\
+  & \equiv S(S(KS)(S(S([x].S)([x].Kx))KI))KI  \qquad\text{por regla (f) y (a)}\\
+  & \equiv S(S(KS)(S(S(KS)K)KI))KI  \qquad\text{por regla (a) y (c)}\\
+\end{align*}
+
+Y por último, podemos aplicar las propias definiciones de los combinadores S, K, I para simplificar la expresión tal que
+\begin{align*}
+  S(S(KS)(S(S(KS)K)KI))KI & \equiv \\
+  & \equiv \text{FALTA TERMINAR ESTA SIMPLIFACIÓN}
+\end{align*}
+
 
 \end{solution}
 
