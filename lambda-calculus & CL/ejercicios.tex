@@ -27,6 +27,8 @@
   \refstepcounter{exercise}%
   \section{}%
 }
+
+\theoremstyle{definition}
 \newtheorem*{solution}{Solución}
 
 \lstdefinestyle{plaintextstyle}{ 
@@ -617,7 +619,24 @@ Como partíamos de que \( T=GN \), efectivamente llegamos a que \( N=GN \), es d
 \[ Y\equiv \lambda y.(\lambda x.y(xx))(\lambda x.y(xx)) \]
 y demuestre que $GY = Y$.
 \begin{solution}
-
+Probemos que $Y$ es un combinador de punto fijo para que, aplicando el Ejercicio 5 (d), concluyamos que \( Y=GY \).
+Es decir, debemos probar que para cada $F$ $\lambda$-término se tiene que \( YF=F(YF) \), que es inmediato por $\beta$-conversión tal que 
+\begin{align*}
+  YF & \equiv \\
+  & \equiv (\lambda y.(\lambda x.y(xx))(\lambda x.y(xx)))F \\
+  & = ((\lambda x.y(xx))(\lambda x.y(xx)))[y:=F] \qquad\text{por $\beta$-conversión}\\
+  & \equiv (\lambda x.y(xx))[y:=F](\lambda x.y(xx))[y:=F] \qquad\text{por sustitución 6}\\
+  & \equiv (\lambda x.F(xx))(\lambda x.F(xx)) \qquad\text{por sustitución 1}\\
+  & \equiv \omega \omega 
+\end{align*}
+Y ahora bastaría continuar reduciendo \( YF=\omega \omega \) tal que
+\begin{align*}
+  \omega \omega & = \\
+  & = F(xx)[x:=\omega] \qquad\text{por $\beta$-conversión}\\
+  & \equiv F(\omega\omega) \qquad\text{por sustitución 1}\\
+  & \equiv F(YF) \qquad\text{por el cálculo previo}\\
+\end{align*}
+Por lo tanto, hemos probado que $Y$ es combinador de punto fijo, con lo cual afirmamos que \( Y=GY \).
 \end{solution}
 
 \pagebreak
@@ -627,7 +646,11 @@ y demuestre que $GY = Y$.
 \[ Y^n = \begin{cases} Y, &\text{si } n=0, \\ Y^{n-1}G, &\text{si } n>0. \end{cases} \]
 Demuestre que para todo $n\ge 0$, $Y^n$ es un combinador de punto fijo.
 \begin{solution}
+Razonamos por inducción sobre \( n\geq 0 \). Por una parte, el caso base \( \boxed{n=0} \) es \( Y^0=Y \), que es claramente un combinador de punto fijo por el Ejercicio 6.
 
+Por otra parte, veamos el caso inductivo \( \boxed{S(k) \Rightarrow S(k+1) \, \forall k>0} \) donde la hipótesis de inducción es \( S(k)=\text{«$Y^k$es un combinador de punto fijo»} \). Queremos demostrar que \( S(k+1) \), y procedemos de la siguiente manera 
+\[ Y^{k+1} \overset{def.}{=} Y^k G \overset{H.I.}{=} G(Y^k G) \overset{def.}{=} G(Y^{k+1})  \]
+En efecto, como \( Y^{k+1} = G(Y^{k+1}) \), entonces \( Y^{k+1} \) es un combinador de punto fijo como se quería demostar, completando la inducción.
 \end{solution}
 
 \pagebreak
