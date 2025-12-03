@@ -447,6 +447,23 @@ El grafo de $\beta$-conversión de un $\lambda$-término T (o grafo de reducció
 \end{enumerate}
 \end{mdframed}
 
+\noindent Comencemos por reducir el $\lambda$-término $(WWW)$: 
+\begin{align*}
+  WWW & \equiv (\lambda xy.xyy)WW \\
+  & = (\lambda y.xyy[x:=W])W \qquad\text{por $\beta$-conversión}\\
+  & = (\lambda y.Wyy)W \qquad\text{por sustitución (4) } \\
+  & = (Wyy [y:=W]) \qquad\text{por $\beta$-conversión}\\
+  & = WWW \qquad\text{por sustitución (4) } \\
+\end{align*} 
+En efecto, tenemos dos $\lambda$-términos no iguales (en el sentido de $\equiv$). Y \( G_\beta(WWW) \) es
+
+\begin{center}
+\polycycleShort[2]{
+  $\mathrm{WWW}$,
+  $(\lambda y.Wyy)W$
+}
+\end{center}
+
 \end{solution}
 
 \pagebreak
@@ -545,7 +562,7 @@ donde \((\dagger)\) resulta por
   W & \equiv \\
   & \equiv \lambda y.G(yy) \\
   & \equiv \lambda y.(\lambda yx.x(yx))(yy) \\
-  & = {\beta} \lambda y.((\lambda x.x(yx))[y:=yy]) \qquad\text{por $\beta$-conversión}\\
+  & = \lambda y.((\lambda x.x(yx))[y:=yy]) \qquad\text{por $\beta$-conversión}\\
   & \equiv \lambda y.\lambda x.x(yyx) \qquad\text{por sustitución (1)}\\
   & = \lambda yx.x(yyx)
 \end{align*}
