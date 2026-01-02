@@ -57,22 +57,25 @@ factorize n = sort . concat $ [ [x, n `div` x] | x <- [1..limit], n `mod` x == 0
     limit = floor . sqrt . fromIntegral $ n
 
 possibleLengths :: String -> [Int]
-possibleLengths str = nub . concatMap factorize $ dists
+possibleLengths str = concatMap (take 1) . sortOn (negate . length) . group $ sortedFactors
   where
     t = normalize str
     trigrams = zip3 t (drop 1 t) (drop 2 t)
     dists = do
-        (x:_) <- filter ((>1) . length) (group $ sort trigrams)
+        (x:_) <- filter ((>1) . length) $ group $ sort trigrams
         let indices = elemIndices x trigrams
         zipWith (-) (drop 1 indices) indices
+    sortedFactors = sort . filter (\k -> k > 1 && k <= 20) . concatMap factorize $ dists
 
--------------------- Indice de Coincidencia --------------------
+
+-------------------- Índice de Coincidencia --------------------
+
 
 buildSubstrings :: Int -> String -> [String]
 buildSubstrings k msg = [ [ msg !! j | j <- [i, i+k .. length msg - 1] ] | i <- [0 .. k-1]]
 
 frequencies :: String -> [Int]
-frequencies s = map length. group. sort$ s
+frequencies s = map length. group. sort $ s
 
 indexOfCoincidence :: String -> Double
 indexOfCoincidence s
@@ -147,30 +150,29 @@ shiftToKeyChar b = chr (ord 'A' + k)
   where
     k = (26 - b) `mod` 26
 
-
 mutualIndexTest :: Int -> String -> String
 mutualIndexTest k msg = map (shiftToKeyChar . bestShift) substrings
   where
     substrings = buildSubstrings k (normalize msg)
 
-{--
-------------------- EXPLICACIÓN DE dists --------------------
-ghci> let trigrams = ["BAN", "ANA", "NAN", "ANA", "NAB", "ABA", "BAN"]
-ghci> sort trigrams
-["ABA","ANA","ANA","BAN","BAN","NAB","NAN"]
-ghci> group $ sort trigrams
-[["ABA"],["ANA","ANA"],["BAN","BAN"],["NAB"],["NAN"]]
-ghci> filter ((>1) . length) (group $ sort trigrams)
-[["ANA","ANA"],["BAN","BAN"]]
-ghci> let ((x:_):_) = filter ((>1) . length) (group $ sort trigrams) -- Emulando el uso de <-
-ghci> print x
-"ANA"
-ghci> let indices = elemIndices x trigrams
-ghci> print indices
-[1,3]
-ghci> print $ drop 1 indices
-[3]
-ghci> zipWith (-) (drop 1 indices) indices
-[2]
----------------------------- end ----------------------------
---}
+
+----------------------------- Attack -----------------------------
+
+
+attackVigenere :: String -> (String, String)
+attackVigenere cipherText = (clave, textoDescifrado)
+  where
+    normText = normalize cipherText
+    
+    candidates = possibleLengths normText
+    
+    bestK = maximumBy compareIndexOfCoincidence candidates
+    
+    clave = mutualIndexTest bestK normText
+
+    textoDescifrado = decrypt clave normText
+
+    compareIndexOfCoincidence k1 k2 = compare (avgIC k1) (avgIC k2)
+      where
+        avgIC k = let result = indexOfCoincidenceTest k normText 
+                  in sum result / fromIntegral (length result)
