@@ -3,8 +3,7 @@
 
 # 🌿 Lógica y Programación (UGR · Curso 2025-2026)
 
-> Ejercicios teórico-prácticos en **Haskell** y **Prolog** correspondientes a la asignatura  
-> **Lógica y Programación** — Grado en Ingeniería Informática, Universidad de Granada.
+> Ejercicios teórico-prácticos en **Lambda Cálculo**, **Lógica Combinatoria** y **Haskell** correspondientes a la asignatura **Lógica y Programación** — Grado en Ingeniería Informática, Universidad de Granada.
 
 <p align="center">
   <a href="https://github.com/a-egealopez">
@@ -48,17 +47,8 @@ Implementaciones funcionales de los problemas del bloque 2 del documento de tare
 
 | Archivo | Descripción |
 |----------|-------------|
-| `conjuntos.hs` | Tipo de dato conjunto y operaciones básicas. |
 | `heron.hs` | Cálculo del área de un triángulo con la fórmula de Herón y método de Newton-Raphson. |
 | `vigenere.hs` | Criptosistema de Vigenère y pequeño laboratorio de análisis criptográfico. |
-
-### 🧠 Prolog
-
-📂 **Carpeta:** [`/haskell & prolog`](https://github.com/a-egealopez/haskel101/tree/main/haskell%20%26%20prolog)
-
-| Archivo | Descripción |
-|----------|-------------|
-| `hanoi.pl` | Resolución del puzzle de las Torres de Hanoi de forma recursiva. |
 
 ---
 
@@ -66,11 +56,9 @@ Implementaciones funcionales de los problemas del bloque 2 del documento de tare
 
 Para ejecutar los proyectos necesitarás:
 
-- 🟣 [**GHC**](https://www.haskell.org/ghc/) — compilador de Haskell  
-- 🟤 [**SWI-Prolog**](https://www.swi-prolog.org/) — entorno de ejecución de Prolog  
+- 🟣 [**GHC**](https://www.haskell.org/ghc/) — compilador de Haskell
 - 🟦 [**Visual Studio Code**](https://code.visualstudio.com/) con las extensiones:
   - *Haskell* (Haskell Foundation)
-  - *Prolog* (SWI-Prolog integration)
 
 ---
 
@@ -95,10 +83,4 @@ funcion 4
 
 # 5️⃣ Para salir de GHCi
 :q
-
-####################################################
-#################### En Prolog #####################
-####################################################
-
-swipl hanoi.pl
 ```
