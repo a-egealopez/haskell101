@@ -37,10 +37,10 @@ shiftChar c (Shift n) = chr (ord 'A' + (ord c - ord 'A' + n) `mod` 26)
 
 vigenereTransform :: Mode -> String -> String -> String
 vigenereTransform mode key str = getZipList $ 
-    shiftChar <$> ZipList (normalize str) 
+    shiftChar <$> ZipList (str) 
               <*> ZipList (cycle shifts)
   where
-    shifts = map toShift $ normalize key
+    shifts = map toShift $ key
     toShift c = applyMode mode $ Shift (ord c - ord 'A')
 
 encrypt :: String -> String -> String
@@ -59,8 +59,7 @@ factorize n = sort . concat $ [ [x, n `div` x] | x <- [1..limit], n `mod` x == 0
 possibleLengths :: String -> [Int]
 possibleLengths str = concatMap (take 1) . sortOn (negate . length) . group $ sortedFactors
   where
-    t = normalize str
-    trigrams = zip3 t (drop 1 t) (drop 2 t)
+    trigrams = zip3 str (drop 1 str) (drop 2 str)
     dists = do
         (x:_) <- filter ((>1) . length) $ group $ sort trigrams
         let indices = elemIndices x trigrams
@@ -89,7 +88,7 @@ indexOfCoincidence s
 indexOfCoincidenceTest :: Int -> String -> [Double]
 indexOfCoincidenceTest k message = map indexOfCoincidence substrings
   where
-    substrings = buildSubstrings k (normalize message)
+    substrings = buildSubstrings k (message)
 
 textoCifrado :: String
 textoCifrado = concat
@@ -136,24 +135,22 @@ relativeFreq c s = fromIntegral (length (filter (== c) s)) / fromIntegral (lengt
 mutualIndex :: String -> Double
 mutualIndex s = sum [ p * relativeFreq c s | (c,p) <- spanishFreq ]
 
-micForShift :: String -> Int -> Double
-micForShift s b = mutualIndex (map (`shiftChar` Shift b) s)
+micForShift :: String -> Shift -> Double
+micForShift s b = mutualIndex (map (`shiftChar`b) s)
 
-bestShift :: String -> Int
+bestShift :: String -> Shift
 bestShift s = snd $ maximumBy cmp results
   where
-    results = [ (micForShift s b, b) | b <- [0..25] ]
+    results = [ (micForShift s b, b) | b <- map Shift [0..25] ]
     cmp (x,_) (y,_) = compare x y
 
-shiftToKeyChar :: Int -> Char
-shiftToKeyChar b = chr (ord 'A' + k)
-  where
-    k = (26 - b) `mod` 26
+shiftToKeyChar :: Shift -> Char
+shiftToKeyChar b = shiftChar 'A' (invert b)
 
 mutualIndexTest :: Int -> String -> String
 mutualIndexTest k msg = map (shiftToKeyChar . bestShift) substrings
   where
-    substrings = buildSubstrings k (normalize msg)
+    substrings = buildSubstrings k (msg)
 
 
 ----------------------------- Attack -----------------------------
