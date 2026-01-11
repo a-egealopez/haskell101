@@ -44,7 +44,10 @@ vigenereTransform mode key str = getZipList $
     toShift c = applyMode mode $ Shift (ord c - ord 'A')
 
 encrypt :: String -> String -> String
-encrypt = vigenereTransform Encrypt
+encrypt key str = vigenereTransform Encrypt cKey cStr
+  where
+    cKey = normalize key 
+    cStr = normalize str
 
 decrypt :: String -> String -> String
 decrypt = vigenereTransform Decrypt
