@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper,top=4cm,bottom=4cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 \usepackage[spanish]{babel}
@@ -21,7 +21,8 @@
 \input{polycycle}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcounter{exercise}
+
+\newcounter{exercise}[chapter]
 \renewcommand{\thesection}{Ejercicio \arabic{exercise}}
 \newcommand{\exercise}{%
   \refstepcounter{exercise}%
@@ -30,48 +31,31 @@
 
 \theoremstyle{definition}
 \newtheorem*{solution}{Solución}
+\newtheorem*{theorem}{Teorema}
+\newtheorem*{proposition}{Proposición}
 
-\lstdefinestyle{plaintextstyle}{ 
-  basicstyle=\footnotesize,        % Fija el tamaño del tipo de letra utilizado para el código
-  breakatwhitespace=false,         % Activarlo para que los saltos automáticos solo se apliquen en los espacios en blanco
-  breaklines=true,                 % Activa el salto de línea automático
-  captionpos=b,                    % Establece la posición de la leyenda del cuadro de código
-  extendedchars=true,              % Permite utilizar caracteres extendidos no-ASCII; solo funciona para codificaciones de 8-bits; para UTF-8 no funciona. En xelatex necesita estar a true para que funcione.
-  frame=single,	                   % Añade un marco al código
-  keepspaces=true,                 % Mantiene los espacios en el texto. Es útil para mantener la indentación del código(puede necesitar columns=flexible).
-  numbers=left,                    % Posición de los números de línea (none, left, right).
-  numbersep=10pt,                   % Distancia de los números de línea al código
-  numberstyle=\small\color{black}, % Estilo para los números de línea
-  rulecolor=\color{black},         % Si no se activa, el color del marco puede cambiar en los saltos de línea entre textos que sea de otro color, por ejemplo, los comentarios, que están en verde en este ejemplo
-  showspaces=false,                % Si se activa, muestra los espacios con guiones bajos; sustituye a 'showstringspaces'
-  showstringspaces=false,          % subraya solamente los espacios que estén en una cadena de esto
-  showtabs=false,                  % muestra las tabulaciones que existan en cadenas de texto con guión bajo
-  stepnumber=1,                    % Muestra solamente los números de línea que corresponden a cada salto. En este caso: 1,3,5,...
-  tabsize=2,	                   % Establece el salto de las tabulaciones a 2 espacios
-  title=\lstname,                  % muestra el nombre de los ficheros incluidos al utilizar \lstinputlisting; también se puede utilizar en el parámetro caption
-}
 
-\lstdefinestyle{cppstyle}{ 
-  language=C++, 
-  basicstyle=\ttfamily\small,       % Fuente monoespaciada pequeña
-  keywordstyle=\bfseries\color{teal},        % Palabras clave en azul
-  commentstyle=\bfseries.\color{purple},       % Comentarios en verde
-  stringstyle=\bfseries\color{olive},          % Cadenas en rojo
-  numbers=left,                     % Números de línea a la izquierda
-  numberstyle=\tiny\color{black},     % Estilo de los números de línea en rojo
-  stepnumber=1,                     % Numerar cada línea
-  numbersep=5pt,                    % Separación entre el número y el código
-  frame=single,                     % Marco alrededor del código
-  backgroundcolor=\color{white},    % Color de fondo blanco
-  showstringspaces=false,           % No mostrar espacios en las cadenas
-  tabsize=2,                        % Tamaño de tabulación
-  breaklines=true,                  % Habilitar la ruptura de líneas largas
-  breakatwhitespace=true,           % Romper líneas solo en espacios
-  rulecolor=\color{black},         % Si no se activa, el color del marco puede cambiar en los saltos de línea entre textos que sea de otro color, por ejemplo, los comentarios, que están en verde en este ejemplo
-  emph={verificar,contenida,equiparar,resolver,log,to_tab,
-        combinarEvidencias,juntar_evidencias_hasta,combinarReglaEvidencia,
-        juntar_reglas_hasta,anadir_meta,to_decimal},  % Funciones específicas a resaltar
-  emphstyle=\bfseries\color{violet}           % Estilo para funciones en violeta
+\lstdefinestyle{haskellstyle}{
+    language=Haskell,
+    mathescape=false,
+    escapeinside={}{},
+    texcl=false,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\bfseries\color{orange!70!black},
+    commentstyle=\itshape\color{teal!90!black},
+    stringstyle=\color{olive},
+    numbers=left,
+    numbersep=10pt,
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    framesep=6pt,
+    postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    showstringspaces=false,
+    morekeywords={where,let,in,until,case,of,if,then,else,deriving,instance,class,newtype}
 }
 
 \title{Lógica y Programación}
@@ -138,15 +122,17 @@
 
 \tableofcontents
 
-\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Problemas de $\lambda$-Calculus y Lógica Combinatoria}
+
 % EJERCICIO 1
 \exercise 
 \noindent Exponga y desarrolle justificadamente el tema de la ``Notación de de Bruijn''.\\
-\begin{solution}
-\end{solution}
+
+\noindent\hrulefill\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Introducción}
+\subsection{Introducción}
 
 La notación tradicional del cálculo $\lambda$ usa nombres para las variables ligadas
 ($x,y,z,\dots$). Esta práctica introduce tres dificultades fundamentales:
@@ -184,7 +170,7 @@ La notación de índices sacrifica parcialmente el punto (i), pero destaca en (i
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Name-carrying expressions y árbol sintáctico}
+\subsection{Name-carrying expressions y árbol sintáctico}
 
 Antes de eliminar nombres, representamos aplicaciones mediante un símbolo especial:
 \[
@@ -245,7 +231,7 @@ Tomemos algunos nodos para ejemplificar:
 Este árbol es la base para convertir la expresión a notación sin nombres.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{De nombres a índices: notación de de Bruijn}
+\subsection{De nombres a índices: notación de de Bruijn}
 
 Para cada ocurrencia ligada, sustituimos su nombre por su \emph{reference depth}.
 
@@ -271,7 +257,7 @@ Para cada ocurrencia ligada, sustituimos su nombre por su \emph{reference depth}
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Sintaxis de expresiones sin nombres}
+\subsection{Sintaxis de expresiones sin nombres}
 
 Usamos una gramática claramente indentada:
 
@@ -293,7 +279,7 @@ Esta sintaxis es extremadamente regular: ya no aparecen nombres ligados, sólo �
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Sustitución en notación de de Bruijn}
+\subsection{Sustitución en notación de de Bruijn}
 
 La sustitución se define como:
 
@@ -327,7 +313,7 @@ Casos fundamentales:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Reducción $\beta$}
+\subsection{Reducción $\beta$}
 
 La regla de contracción $\beta$ se expresa elegantemente:
 
@@ -359,7 +345,7 @@ A((\lambda.\,\lambda.\,2),(y))
 En ningún momento aparece conversión-$\alpha$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Reducción $\eta$}
+\subsection{Reducción $\eta$}
 
 La regla extensional:
 
@@ -380,7 +366,7 @@ f.
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Algunos comentarios sobre la reducción múltiple}
+\subsection{Algunos comentarios sobre la reducción múltiple}
 
 De Bruijn desarrolla una teoría de \emph{reducción múltiple} $\beta_U$, donde un conjunto
 $U$ de símbolos de aplicación se reduce simultáneamente.
@@ -403,7 +389,7 @@ por lo que la demostración se vuelve más transparente: la confluencia se logra
 propiedades puramente estructurales.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Conclusión}
+\subsection{Conclusión}
 
 La notación de de Bruijn resuelve de raíz los problemas de captura y renombrado al
 sustituir nombres ligados por índices estructurales. La sustitución y la reducción
@@ -719,12 +705,320 @@ Y por último, podemos aplicar las propias definiciones de los combinadores S, K
 % EJERCICIO 9
 \exercise 
 \noindent Esquematice la relación entre el sistema $\lambda$ y la lógica combinatoria.
-\begin{solution}
 
-\end{solution}
+\noindent\hrulefill\\
+
+e
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Unidad Temática: Lógica de Primer Orden — Los Teoremas de incompletitud de Gödel}
+
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+
+\section{Introducción}
+Esta unidad temática presenta una exposición formal pero accesible de los Teoremas de Incompletitud de Gödel. El objetivo es combinar rigor matemático —mediante notación y resultados precisos— con explicaciones conceptuales que faciliten la comprensión de las ideas fundamentales.
+
+\section{Consistencia, coherencia y completitud}
+
+\subsection{Consistencia}
+Sea $\Phi$ un conjunto de fórmulas de un lenguaje lógico $L$. Una \emph{contradicción} es una fórmula de la forma $\varphi \land \neg\varphi$.
+
+\begin{proposition}[\emph{Ex falso quodlibet}]
+Para un conjunto de fórmulas $\Phi$ son equivalentes:
+\begin{enumerate}
+\item Existe una fórmula $\varphi$ tal que $\Phi \vdash \varphi \land \neg\varphi$.
+\item Para toda fórmula $\psi$, se tiene $\Phi \vdash \psi$.
+\end{enumerate}
+\end{proposition}
+
+Este principio expresa que, en presencia de una contradicción, el sistema pierde todo poder discriminatorio. Por ello, diremos que $\Phi$ es \emph{inconsistente} si demuestra alguna contradicción, y \emph{consistente} en caso contrario.
+
+\subsection{Coherencia}
+La relación entre demostrabilidad sintáctica y verdad semántica se recoge en el siguiente resultado:
+
+\begin{theorem}[Teorema de la Coherencia]
+Sea $\Phi$ un conjunto de fórmulas y $\mathcal{M}$ un modelo tal que $\mathcal{M} \models \Phi$. Entonces, para toda fórmula $\varphi$:
+\[
+\Phi \vdash \varphi ; \Rightarrow ; \mathcal{M} \models \varphi.
+\]
+\end{theorem}
+
+Este teorema garantiza que el sistema lógico es \emph{correcto}: nada falso en un modelo puede ser demostrado a partir de las hipótesis verdaderas en dicho modelo.
+
+\subsection{Completitud}
+Una teoría $T$ se dice \emph{completa} si para toda fórmula cerrada $\varphi$ se cumple:
+\[
+T \vdash \varphi \quad \text{o bien} \quad T \vdash \neg\varphi.
+\]
+
+El siguiente resultado clásico conecta consistencia, modelos y demostrabilidad:
+
+\begin{theorem}[Teorema de Completitud]
+Sea $\Phi$ un conjunto consistente de fórmulas. Entonces existe un modelo $\mathcal{M}$ tal que $\mathcal{M} \models \Phi$. Además, para toda sentencia $\sigma$:
+\[
+(\forall \mathcal{M} \models \Phi,; \mathcal{M} \models \sigma) \Rightarrow \Phi \vdash \sigma.
+\]
+\end{theorem}
+
+Este resultado puede interpretarse como que toda verdad semántica universal es demostrable, siempre que el sistema sea consistente.
+
+\section{Axiomática de Peano}
+
+\subsection{Axiomas de Peano}
+
+\begin{align*}
+\text{AP0: }& \neg \exists x,(s(x) = 0) \\
+\text{AP1: }& \forall x\forall y,(s(x) = s(y) \rightarrow x = y) \\
+\text{AP2: }& \forall x,(x + 0 = x) \\
+\text{AP3: }& \forall x\forall y,(x + s(y) = s(x + y)) \\
+\text{AP4: }& \forall x,(x \cdot 0 = 0) \\
+\text{AP5: }& \forall x\forall y,(x \cdot s(y) = (x \cdot y) + x)
+\end{align*}
+
+
+\subsection{Aritmética y propiedades de AP}
+
+\section{La Función de Gödel}
+
+
+\section{Teoremas de Incompletitud de Gödel}
+
+\subsection{Lema de la diagonalización}
+
+\begin{theorem}[Lema de la diagonalización]
+Sea $\varphi(\nu)$ una fórmula con una única variable libre. Existe una sentencia $\sigma$ tal que:
+\[
+\text{AP} \vdash \sigma \leftrightarrow \varphi(\ulcorner \sigma \urcorner).
+\]
+\end{theorem}
+
+Este lema permite construir sentencias autorreferenciales, pieza central de la demostración de los teoremas de Gödel.
+
+\subsection{Primer Teorema de Incompletitud}
+
+\begin{theorem}[Primer Teorema de Incompletitud]
+Si la Axiomática de Peano es consistente, entonces es incompleta.
+\end{theorem}
+
+La idea de la demostración consiste en construir una sentencia que afirma su propia no demostrabilidad. Si dicha sentencia fuese demostrable o refutable, se obtendría una contradicción con la consistencia del sistema.
+
+\subsection{Segundo Teorema de Incompletitud}
+
+\begin{theorem}[Segundo Teorema de Incompletitud]
+Si la Axiomática de Peano es consistente, entonces no puede demostrar su propia consistencia.
+\end{theorem}
+
+Este resultado muestra una limitación aún más profunda: ningún sistema formal suficientemente expresivo puede, desde dentro, garantizar formalmente que está libre de contradicciones.
+
+\section{Conclusión}
+Los Teoremas de Incompletitud de Gödel establecen límites fundamentales a los sistemas formales y, por extensión, a los métodos algorítmicos. En informática, estos resultados subyacen a la imposibilidad de construir procedimientos automáticos universales para demostrar todas las verdades matemáticas o verificar completamente sistemas complejos.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Ejercicios de Programación en Haskell}
+
+\renewcommand{\thesection}{Ejercicio \arabic{exercise}}
+\setcounter{exercise}{1}
+
+\exercise
+
+\begin{lstlisting}[style=haskellstyle, caption=Cálculo del área de un triángulo según la Fórmula de Herón]
+import Data.List (sort)
+
+heron :: (Ord a, Fractional a) => a -> a -> a -> Maybe a
+heron a b c
+  | not $ isTriangle a b c = Nothing
+  | otherwise              = Just . newton f df $ x0
+  where
+    s = (a+b+c)/2
+    t = s*(s-a)*(s-b)*(s-c)
+    f x = x*x-t
+    df x = 2*x
+    x0 = max 1 $ t/2
+
+    isTriangle :: (Ord a, Num a) => a -> a -> a -> Bool 
+    isTriangle a b c = x>0 && x+y>z
+      where [x,y,z] = sort [a,b,c]
+
+    newton :: (Ord a, Fractional a) => (a -> a) -> (a -> a) -> a -> a
+    newton f df x0 = until (isCloseEnough 1e-12) nextIteration x0
+      where
+        isCloseEnough eps x = abs (f x) < eps
+        nextIteration x = x - f x / df x
+\end{lstlisting}
+
+\pagebreak
+
+\exercise 
+
+\begin{lstlisting}[style=haskellstyle, caption=Criptosistema de Vigenère]
+import Data.Char (isLetter, toUpper, ord, chr)
+import Data.List (group, sort, nub, elemIndices, sortOn, maximumBy)
+import Control.Applicative (ZipList(..))
+
+class Monoid g => Group g where
+    invert :: g -> g
+
+------------------------- Datos y Algebras -------------------------
+
+data Mode = Encrypt | Decrypt
+
+newtype Shift = Shift Int deriving (Eq, Show)
+
+instance Semigroup Shift where
+    (Shift a) <> (Shift b) = Shift ((a + b) `mod` 26)
+
+instance Monoid Shift where
+    mempty = Shift 0
+
+instance Group Shift where
+    invert (Shift n) = Shift (-n `mod` 26)
+
+--------------------- Logica de transformacion ---------------------
+
+applyMode :: Mode -> Shift -> Shift
+applyMode Encrypt = id
+applyMode Decrypt = invert
+
+normalize :: String -> String
+normalize str = toUpper <$> filter isLetter str
+
+shiftChar :: Char -> Shift -> Char
+shiftChar c (Shift n) = chr (ord 'A' + (ord c - ord 'A' + n) `mod` 26)
+
+----------------------- Algoritmo de Vigenere ----------------------
+
+vigenereTransform :: Mode -> String -> String -> String
+vigenereTransform mode key str = getZipList $ 
+    shiftChar <$> ZipList (str) 
+              <*> ZipList (cycle shifts)
+  where
+    shifts = map toShift $ key
+    toShift c = applyMode mode $ Shift (ord c - ord 'A')
+
+encrypt :: String -> String -> String
+encrypt key str = vigenereTransform Encrypt cKey cStr
+  where
+    cKey = normalize key 
+    cStr = normalize str
+
+decrypt :: String -> String -> String
+decrypt = vigenereTransform Decrypt
+
+----------------------- Metodo de Kasiski --------------------------
+
+factorize :: Int -> [Int]
+factorize n = sort . concat $ [ [x, n `div` x] | x <- [1..limit], n `mod` x == 0 ]
+  where 
+    limit = floor . sqrt . fromIntegral $ n
+
+possibleLengths :: String -> [Int]
+possibleLengths str = concatMap (take 1) . sortOn (negate . length) . group $ sortedFactors
+  where
+    trigrams = zip3 str (drop 1 str) (drop 2 str)
+    dists = do
+        (x:_) <- filter ((>1) . length) $ group $ sort trigrams
+        let indices = elemIndices x trigrams
+        zipWith (-) (drop 1 indices) indices
+    sortedFactors = sort . filter (\k -> k > 1 && k <= 20) . concatMap factorize $ dists
+
+--------------------- Indice de Coincidencia -----------------------
+
+buildSubstrings :: Int -> String -> [String]
+buildSubstrings k msg = [ [ msg !! j | j <- [i, i+k .. length msg - 1] ] | i <- [0 .. k-1]]
+
+frequencies :: String -> [Int]
+frequencies s = map length . group . sort $ s
+
+indexOfCoincidence :: String -> Double
+indexOfCoincidence s
+  | n <= 1    = 0
+  | otherwise = fromIntegral acc / fromIntegral (n * (n - 1))
+  where
+    freqs = frequencies s
+    acc   = sum [ f * (f - 1) | f <- freqs ]
+    n     = sum freqs
+    
+indexOfCoincidenceTest :: Int -> String -> [Double]
+indexOfCoincidenceTest k message = map indexOfCoincidence substrings
+  where
+    substrings = buildSubstrings k (message)
+
+textoCifrado :: String
+textoCifrado =
+  "UECWKDVLOTTVACKTPVGEZQMDAMRNPDDUXLBUICAMRHOECBHSPQLVIWO\
+  \FFEAILPNTESMLDRUURIFAEQTTPXADWIAWLACCRPBHSRZIVQWOFROGTT\
+  \NNXEVIVIBPDTTGAHVIACLAYKGJIEQHGECMESNNOCTHSGGNVWTQHKBPR\
+  \HMVUOYWLIAFIRIGDBOEBQLIGWARQHNLOISQKEPEIDVXXNETPAXNZGDX\
+  \WWEYQCTIGONNGJVHSQGEATHSYGSDVVOAQCXLHSPQMDMETRTMDUXTEQQ\
+  \JMFAEEAAIMEZREGIMUECICBXRVQRSMENNWTXTNSRNBPZHMRVRDYNECG\
+  \SPMEAVTENXKEQKCTTHSPCMQQHSQGTXMFPBGLWQZRBOEIZHQHGRTOBSG\
+  \TATTZRNFOSMLEDWESIWDRNAPBFOFHEGIXLFVOGUZLNUSRCRAZGZRTTA\
+  \YFEHKHMCQNTZLENPUCKBAYCICUBNRPCXIWEYCSIMFPRUTPLXSYCBGCC\
+  \UYCQJMWIEKGTUBRHVATTLEKVACBXQHGPDZEANNTJZTDRNSDTFEVPDXK\
+  \TMVNAIQMUQNOHKKOAQMTBKOFSUTUXPRTMXBXNPCLRCEAEOIAWGGVVUS\
+  \GIOEWLIQFOZKSPVMEBLOHLXDVCYSMGOPJEFCXMRUIGDXNCCRPMLCEWT\
+  \PZMOQQSAWLPHPTDAWEYJOGQSOAVERCTNQQEAVTUGKLJAXMRTGTIEAFW\
+  \PTZYIPKESMEAFCGJILSBPLDABNFVRJUXNGQSWIUIGWAAMLDRNNPDXGN\
+  \PTTGLUHUOBMXSPQNDKBDBTEECLECGRDPTYBVRDATQHKQJMKEFROCLXN\
+  \FKNSCWANNAHXTRGKCJTTRRUEMQZEAEIPAWEYPAJBBLHUEHMVUNFRPVM\
+  \EDWEKMHRREOGZBDBROGCGANIUYIBNZQVXTGORUUCUTNBOEIZHEFWNBI\
+  \GOZGTGWXNRHERBHPHGSIWXNPQMJVBCNEIDVVOAGLPONAPWYPXKEFKOC\
+  \MQTRTIDZBNQKCPLTTNOBXMGLNRRDNNNQKDPLTLNSUTAXMNPTXMGEZKA\
+  \EIKAGQ"
+
+------------------- Mutual Index Of Coincidence --------------------
+
+spanishFreq :: [(Char, Double)]
+spanishFreq =
+  [ ('A',0.1253),('B',0.0142),('C',0.0468),('D',0.0586)
+  , ('E',0.1368),('F',0.0069),('G',0.0101),('H',0.0070)
+  , ('I',0.0625),('J',0.0044),('K',0.0002),('L',0.0497)
+  , ('M',0.0315),('N',0.0671),('O',0.0868),('P',0.0251)
+  , ('Q',0.0088),('R',0.0687),('S',0.0798),('T',0.0463)
+  , ('U',0.0393),('V',0.0090),('W',0.0001),('X',0.0022)
+  , ('Y',0.0090),('Z',0.0052)
+  ]
+
+relativeFreq :: Char -> String -> Double
+relativeFreq c s = fromIntegral (length (filter (== c) s)) / fromIntegral (length s)
+
+mutualIndex :: String -> Double
+mutualIndex s = sum [ p * relativeFreq c s | (c,p) <- spanishFreq ]
+
+micForShift :: String -> Shift -> Double
+micForShift s b = mutualIndex (map (`shiftChar`b) s)
+
+bestShift :: String -> Shift
+bestShift s = snd $ maximumBy cmp results
+  where
+    results = [ (micForShift s b, b) | b <- map Shift [0..25] ]
+    cmp (x,_) (y,_) = compare x y
+
+shiftToKeyChar :: Shift -> Char
+shiftToKeyChar b = shiftChar 'A' (invert b)
+
+mutualIndexTest :: Int -> String -> String
+mutualIndexTest k msg = map (shiftToKeyChar . bestShift) substrings
+  where
+    substrings = buildSubstrings k (msg)
+
+----------------------------- Attack -------------------------------
+
+attackVigenere :: String -> (String, String)
+attackVigenere cipherText = (clave, textoDescifrado)
+  where
+    normText = normalize cipherText
+    candidates = possibleLengths normText
+    bestK = maximumBy compareIndexOfCoincidence candidates
+    clave = mutualIndexTest bestK normText
+    textoDescifrado = decrypt clave normText
+    compareIndexOfCoincidence k1 k2 = compare (avgIC k1) (avgIC k2)
+      where
+        avgIC k = let result = indexOfCoincidenceTest k normText 
+                  in sum result / fromIntegral (length result)
+\end{lstlisting}
 
 \pagebreak
 
@@ -747,6 +1041,15 @@ Hindley, J. R., \& Seldin, J. P. (2008).
 \textit{Lambda-calculus and combinators: An introduction} (2nd ed.).
 Cambridge University Press.
 (Secciones relevantes: Section 2C, \textit{Abstraction in CL}, pp.~26--29; Chapter 9, \textit{Correspondence between $\lambda$ and CL}, pp.~92--106.)
+
+\bibitem{garcia2023-godel}
+García López, J. (2023).
+\textit{Los teoremas de incompletitud de Gödel (Gödel’s Incompleteness Theorems)}.
+Trabajo de Fin de Grado, Grado en Matemáticas,
+Universidad de Cantabria.
+{https://hdl.handle.net/10902/29859}.
+
+
 
 \end{thebibliography}
 

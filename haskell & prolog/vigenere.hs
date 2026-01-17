@@ -5,8 +5,7 @@ import Control.Applicative (ZipList(..))
 class Monoid g => Group g where
   invert :: g -> g
 
--------------------- Datos y Álgebras --------------------
-
+------------------------- Datos y Algebras -------------------------
 data Mode = Encrypt | Decrypt
 
 newtype Shift = Shift Int deriving (Eq, Show)
@@ -20,8 +19,7 @@ instance Monoid Shift where
 instance Group Shift where
   invert (Shift n) = Shift (-n `mod` 26)
 
--------------------- Lógica de transformación --------------------
-
+--------------------- Logica de transformacion ---------------------
 applyMode :: Mode -> Shift -> Shift
 applyMode Encrypt = id
 applyMode Decrypt = invert
@@ -33,8 +31,7 @@ shiftChar :: Char -> Shift -> Char
 shiftChar c (Shift n) = chr (ord 'A' + (ord c - ord 'A' + n) `mod` 26)
 
 
--------------------- Algoritmo de Vigenère --------------------
-
+----------------------- Algoritmo de Vigenere ----------------------
 vigenereTransform :: Mode -> String -> String -> String
 vigenereTransform mode key str = getZipList $ 
     shiftChar <$> ZipList (str) 
@@ -52,8 +49,7 @@ encrypt key str = vigenereTransform Encrypt cKey cStr
 decrypt :: String -> String -> String
 decrypt = vigenereTransform Decrypt
 
--------------------- Método de Kasiski --------------------
-
+----------------------- Metodo de Kasiski --------------------------
 factorize :: Int -> [Int]
 factorize n = sort . concat $ [ [x, n `div` x] | x <- [1..limit], n `mod` x == 0 ]
   where 
@@ -70,8 +66,7 @@ possibleLengths str = concatMap (take 1) . sortOn (negate . length) . group $ so
     sortedFactors = sort . filter (\k -> k > 1 && k <= 20) . concatMap factorize $ dists
 
 
--------------------- Índice de Coincidencia --------------------
-
+--------------------- Indice de Coincidencia -----------------------
 
 buildSubstrings :: Int -> String -> [String]
 buildSubstrings k msg = [ [ msg !! j | j <- [i, i+k .. length msg - 1] ] | i <- [0 .. k-1]]
@@ -117,8 +112,7 @@ textoCifrado =
   \EIKAGQ"
 
 
--------------------- Mutual Index Of Coincidence--------------------
-
+------------------- Mutual Index Of Coincidence --------------------
 
 spanishFreq :: [(Char, Double)]
 spanishFreq =
@@ -155,13 +149,12 @@ mutualIndexTest k msg = map (shiftToKeyChar . bestShift) substrings
     substrings = buildSubstrings k (msg)
 
 
------------------------------ Attack -----------------------------
-
+----------------------------- Attack -------------------------------
 
 attackVigenere :: String -> (String, String)
 attackVigenere cipherText = (clave, textoDescifrado)
   where
-    normText = normalize cipherText
+    normText = cipherText
     
     candidates = possibleLengths normText
     
@@ -175,3 +168,81 @@ attackVigenere cipherText = (clave, textoDescifrado)
       where
         avgIC k = let result = indexOfCoincidenceTest k normText 
                   in sum result / fromIntegral (length result)
+
+
+--------------------------------------------------------------------
+----------------------------- Tests --------------------------------
+--------------------------------------------------------------------
+
+test_Normalize :: [String]
+test_Normalize =
+  [ normalize "Hola Mundo!"        -- "HOLAMUNDO"
+  , normalize "Vigene&re 123"       -- "VIGENRE"
+  , normalize "abcXYZ"             -- "ABCXYZ"
+  ]
+
+test_ShiftChar :: [Char]
+test_ShiftChar =
+  [ shiftChar 'A' (Shift 3)        -- 'D'
+  , shiftChar 'Z' (Shift 1)        -- 'A'
+  , shiftChar 'C' (Shift 26)       -- 'C'
+  ]
+
+test_Encrypt :: [String]
+test_Encrypt =
+  [ encrypt "CLAVE" "HOLA"
+  , encrypt "A" "MENSAJE"           -- sin cambio
+  , encrypt "VIGENERE" "ATAQUE"
+  ]
+
+test_Decrypt :: [String]
+test_Decrypt =
+  [ decrypt "CLAVE" (encrypt "CLAVE" "HOLA")
+  , decrypt "A" (encrypt "A" "MENSAJE")
+  , decrypt "VIGENERE" (encrypt "VIGENERE" "ATAQUE")
+  ]
+
+test_Factorize :: [[Int]]
+test_Factorize =
+  [ factorize 12
+  , factorize 13
+  , factorize 36
+  ]
+
+test_PossibleLengths :: [[Int]]
+test_PossibleLengths =
+  [ possibleLengths "ABCABCABC"
+  , possibleLengths textoCifrado
+  ]
+
+test_IndexOfCoincidence :: [Double]
+test_IndexOfCoincidence =
+  [ indexOfCoincidence "AAAAA"     -- alto
+  , indexOfCoincidence "ABCDE"     -- bajo
+  , indexOfCoincidence "HOLAQUEHAY"
+  ]
+
+test_IndexOfCoincidenceTest :: [[Double]]
+test_IndexOfCoincidenceTest =
+  [ indexOfCoincidenceTest 3 "ATAQUEALAMANECER"
+  , indexOfCoincidenceTest 5 textoCifrado
+  ]
+
+test_MutualIndex :: [Double]
+test_MutualIndex =
+  [ mutualIndex "EEEEEE"
+  , mutualIndex "ABCDEFG"
+  , mutualIndex "HOLAESTOESUNAPRUEBA"
+  ]
+
+test_BestShift :: [Shift]
+test_BestShift =
+  [ bestShift "EEEEEEEE"
+  , bestShift "LIPPSASVPH"
+  ]
+
+test_AttackVigenere :: [(String, String)]
+test_AttackVigenere =
+  [ attackVigenere textoCifrado
+  , attackVigenere (encrypt "ESTOESUNAPRUEBA" "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor. Una olla de algo más vaca que carnero, salpicón las más noches, duelos y quebrantos los sábados, lantejas los viernes, algún palomino de añadidura los domingos, consumían las tres partes de su hacienda.")
+  ]
