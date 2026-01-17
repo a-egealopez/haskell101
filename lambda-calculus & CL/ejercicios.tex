@@ -132,6 +132,7 @@
 \noindent\hrulefill\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
 \subsection{Introducción}
 
 La notación tradicional del cálculo $\lambda$ usa nombres para las variables ligadas
@@ -402,6 +403,7 @@ global del cálculo $\lambda$.
 
 \pagebreak
 % EJERCICIO 2
+\renewcommand{\thesection}{Ejercicio \arabic{exercise}}
 \exercise 
 \noindent Demuestre que para todo $\lambda$-término $N$, \; $\lambda x.x\,K\,N \;\# \; \lambda x.x\,S\,N$. (Nota: Recuérdese que $S\equiv\lambda xyz.xz(yz)$ y $K\equiv\lambda xy.x$).
 \begin{solution}
