@@ -710,7 +710,7 @@ Y por último, podemos aplicar las propias definiciones de los combinadores S, K
 
 \noindent\hrulefill\\
 
-El sistema $\lambda$ y la lógica combinatoria son dos sistemas equivalentes en poder expresivo, pero con distintos enfoques. El $\lambda$-calculo usa variables, abstracción $(\lambda x.M)$, sustitución y $\alpha$-conversión mientras que la lógica combinatoria trabaja únicamente con aplicación y combinadores (S, K, I...). Para profundizar más en como se relacionan, se hará una definición formal de el sistema de la lógica combinatoria $\lambda$
+El sistema $\lambda$ y la lógica combinatoria son dos sistemas equivalentes en poder expresivo, pero con distintos enfoques. El $\lambda$-calculo usa variables, abstracción $(\lambda x.M)$, sustitución y $\alpha$-conversión mientras que la lógica combinatoria trabaja únicamente con aplicación y combinadores (S, K, I...). Para profundizar más en como se relacionan, se hará una definición formal de la lógica combinatoria para después relacinarlo con el sistema $\lambda$.
 
 
  Los sistemas de combinadores realizan la misma funcionalidad que el $\lambda$-cálculo sin el uso de variables ligadas. Un combinador es un término cerrado de la lógica combinatoria, es decir, un término que no contiene variables y que se construye únicamente mediante aplicación y constantes combinatorias. Hay un número infinito de combinadores de los cuales tres se denominan combinadores básicos:
@@ -759,7 +759,7 @@ La lógica combinatoria carece de $\beta$ reducción, por lo que la computación
     \item $\mathbf{K}XY \to X$,
     \item $\mathbf{S}XYZ \to XZ(YZ)$.
 \end{itemize}
-Si mediante estas reglas $U$ pasa a $U'$, se dice que \textit{U se contrae débilmente a U'} expresado notacionalmente como 
+Si mediante una de estas reglas $U$ pasa a $U'$, se dice que \textit{U se contrae débilmente a U'} expresado notacionalmente como 
 \[U\to_{1w}U'\]
 Si $V$ se obtiene a partir de una sucesión finita de reducciones débiles, se dice que \textit{reduce débilmente a V}, o  
 \[U\to_wU'\]
