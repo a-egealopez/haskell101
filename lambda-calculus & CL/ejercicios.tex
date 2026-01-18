@@ -710,7 +710,87 @@ Y por último, podemos aplicar las propias definiciones de los combinadores S, K
 
 \noindent\hrulefill\\
 
-e
+El sistema $\lambda$ y la lógica combinatoria son dos sistemas equivalentes en poder expresivo, pero con distintos enfoques. El $\lambda$-calculo usa variables, abstracción $(\lambda x.M)$, sustitución y $\alpha$-conversión mientras que la lógica combinatoria trabaja únicamente con aplicación y combinadores (S, K, I...). Para profundizar más en como se relacionan, se hará una definición formal de el sistema de la lógica combinatoria $\lambda$
+
+
+ Los sistemas de combinadores realizan la misma funcionalidad que el $\lambda$-cálculo sin el uso de variables ligadas. Un combinador es un término cerrado de la lógica combinatoria, es decir, un término que no contiene variables y que se construye únicamente mediante aplicación y constantes combinatorias. Hay un número infinito de combinadores de los cuales tres se denominan combinadores básicos:
+\begin{itemize}
+    \item \textbf{I}, el operador indentidad: $\textbf{I}(f) = f$
+    \item \textbf{K}, combinador que forma funciones constantes: $(\textbf{K}(a))(x) = a$
+    \item \textbf{S}, el operador de composición: $(\textbf{S}(f,g))(x) = f(x,g(x))$
+\end{itemize}
+
+\noindent El alfabeto de los términos de la lógica combinatoria es el compuesto por los siguientes símbolos: 
+\begin{itemize}
+    \item símbolos de variable $v_0, v_{00}, v_{000}$
+    \item constantes atómicas, incluyendo los combinadores básicos.  
+\end{itemize}
+El conjunto de términos de la lógica combinatoria se define inductivamente como sigue:
+
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})} % Cambia el formato a a), b), c)...
+  \item Toda variable y toda constante atómica es un término;
+  \item si $X$ e $Y$ son términos,  entonces $(XY)$ también lo es. ocurre en $(UV)$
+\end{enumerate}
+
+Cualquier sucesión finita de elementos del alfabeto de términos es un término de la lógica combinatoria. Por ejemplo:
+\[ \textbf{((S(KS))K)},\qquad\qquad\textbf{((S($Kv_0$))((SK)K))}\]son ambos términos de la lógica combinatoria, siendo el primero además un combinador. 
+
+\noindent Conociendo los términos podemos definir la relacion \textit{X ocurre en Y}, o \textit{X es un subtérmino de Y}: 
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item $X$ ocurre en $X$
+  \item si $X$ ocurre en $U$ o en $V$, entonces $X$ ocurre en $(UV)$
+\end{enumerate}
+Es importante destacar que todas las variables que ocurran en un término $Y$ pertenecen a FV($Y$) puesto que no hay ningún $\lambda$ que las capture.
+
+ Al igual que en el $\lambda$-cálculo, la lógica combinatoria también define la sustitución de términos de forma recursiva. $[U/X]Y$ se define recursivamente como el resultado de sustituir el término $U$ por cada ocurrencia de $x$ en $Y$ de la siguiente forma: 
+
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})} 
+  \item $[U/x]x \equiv U,$
+  \item $[U/x]a \equiv a$ si $a \not\equiv x$
+  \item $[U/x](VW) \equiv ([U/x]V[U/x]W). $ 
+\end{enumerate}
+
+La lógica combinatoria carece de $\beta$ reducción, por lo que la computación se define mediante reglas de reducción para \textbf{I, K} y \textbf{S}. Cualquier término $\textbf{I}X$, $\textbf{K}YZ$ o $\textbf{S}XYZ$ se denomina un \textit{redex débil. Contraer} un redex debil significa reducir los términos de la siguiente forma:  
+\begin{itemize}
+    \item $\mathbf{I}X \to X$,
+    \item $\mathbf{K}XY \to X$,
+    \item $\mathbf{S}XYZ \to XZ(YZ)$.
+\end{itemize}
+Si mediante estas reglas $U$ pasa a $U'$, se dice que \textit{U se contrae débilmente a U'} expresado notacionalmente como 
+\[U\to_{1w}U'\]
+Si $V$ se obtiene a partir de una sucesión finita de reducciones débiles, se dice que \textit{reduce débilmente a V}, o  
+\[U\to_wU'\]
+
+Dado que la lógica combinatoria carece de abstracción $\lambda$, es necesario introducir un mecanismo que permita representar funciones con parámetros. Esto se logra mediante la construcción meta-teórica $[x].M$ que traduce la abstracción del cálculo lambda a un término de lógica combinatoria con la propiedad de que \[([x].M)N\to_w[N/x]M.\]
+El término $[x].M$ actuará de forma equivalente a $\lambda x.M$ y se creará como una combinación de los términos \textbf{I, K} y \textbf{S} de la siguiente forma: 
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item $[x].M \equiv \mathbf{K}M \qquad \text{si } x \notin FV(M)$;
+  \item $[x].x \equiv \mathbf{I}$;
+  \item $[x].(Ux) \equiv U \qquad \text{si } x \notin FV(U)$;
+  \item $[x].(UV) \equiv \mathbf{S}([x].U)([x].V) \qquad \text{si no se aplican (a) ni (c).}$
+\end{enumerate}
+
+\noindent Por ejemplo: 
+ \begin{align*}
+  [x.xy] &\equiv \textbf{S}(([x].x)([x].y) \qquad\text{por regla (f)}\\
+  & \equiv \textbf{SI}\text{(}\textbf{K}\text{y)} \qquad \text{por (b) y (a).}\\
+\end{align*}
+\noindent
+Así, la propiedad fundamental de la abstracción, esto es,
+\[
+([x].M)N \to_w [N/x]M,
+\]
+muestra que el término combinatorio $[x].M$ reproduce exactamente el comportamiento de la abstracción $\lambda x.M$ bajo aplicación, siendo la reducción débil el análogo de la $\beta$-reducción del cálculo lambda.
+
+En consecuencia, toda abstracción del cálculo lambda puede eliminarse sistemáticamente mediante la construcción $[x].M$, obteniendo un término de la lógica combinatoria formado únicamente por aplicación y combinadores básicos. Este procedimiento permite traducir cualquier término del cálculo lambda a un término combinatorio que preserva su comportamiento computacional.
+
+
+Por tanto, la lógica combinatoria constituye una reformulación del cálculo lambda sin variables ligadas ni abstracción explícita, pero con el mismo poder expresivo. Ambos sistemas describen la misma clase de funciones computables, diferenciándose únicamente en el enfoque sintáctico utilizado para representar la noción de función.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Unidad Temática: Lógica de Primer Orden — Los Teoremas de incompletitud de Gödel}
