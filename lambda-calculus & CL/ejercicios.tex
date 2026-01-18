@@ -684,22 +684,20 @@ Vamos a operar según las reglas (*las reglas se enuncian en orden de aplicació
 \begin{align*}
   [x].([y].xyy) & \equiv \\
   & \equiv [x].(S([y].xy)([y].y))  \qquad\text{por regla (f)}\\
-  & \equiv [x].(S(S([y].x)([y].y))I)  \qquad\text{por regla (f) y (b)}\\
-  & \equiv [x].(S(S(Kx)(I))I)  \qquad\text{por regla (a) y (b)}\\
-  & \equiv S([x].S(S(Kx)(I)))([x].I)  \qquad\text{por regla (f)}\\
-  & \equiv S(S([x].S)([x].(S(Kx)(I))))KI  \qquad\text{por regla (f) y (a)}\\
-  & \equiv S(S(KS)([x].(S(Kx)(I))))KI  \qquad\text{por regla (a) y (f)}\\
-  & \equiv S(S(KS)(S([x].S(Kx))([x].I)))KI  \qquad\text{por regla (f)}\\
-  & \equiv S(S(KS)(S(S([x].S)([x].Kx))KI))KI  \qquad\text{por regla (f) y (a)}\\
-  & \equiv S(S(KS)(S(S(KS)K)KI))KI  \qquad\text{por regla (a) y (c)}\\
+  & \equiv [x].((Sx)I)  \qquad\text{por regla (c) y (b)}\\
+  & \equiv S([x].(Sx))([x].I) \qquad\text{por regla (f)}\\
+  & \equiv S(S)(KI) \qquad\text{por regla (c) y (a)}\\
+  & \equiv SSKI \\
 \end{align*}
 
 Y por último, podemos aplicar las propias definiciones de los combinadores S, K, I para simplificar la expresión tal que
 \begin{align*}
-  S(S(KS)(S(S(KS)K)KI))KI & \equiv \\
-  & \equiv \text{FALTA TERMINAR ESTA SIMPLIFACIÓN}
+  SSKI & \equiv \\
+  & \equiv SI(KI)
 \end{align*}
 
+Sin embargo, esta reducción no produce una expresión conceptualmente más simple. Por ello, aceptamos como solución final el combinador
+\[ \boxed{SSKI} \]
 
 \end{solution}
 
