@@ -10,6 +10,7 @@
 \usepackage{xcolor}
 \usepackage{changepage}
 \usepackage{mdframed}
+\usepackage{amssymb}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,6 +21,8 @@
 \usetikzlibrary{positioning, arrows.meta, shapes.geometric}
 \input{polycycle}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\AP}{\textbf{AP}}
 
 
 \newcounter{exercise}[chapter]
@@ -799,56 +802,61 @@ En consecuencia, toda abstracción del cálculo $\lambda$ puede eliminarse siste
 Por tanto, la lógica combinatoria constituye una reformulación del cálculo $\lambda$ sin variables ligadas ni abstracción explícita, pero con el mismo poder expresivo. Ambos sistemas describen la misma clase de funciones computables, diferenciándose únicamente en el enfoque sintáctico utilizado para representar la noción de función.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Unidad Temática: Lógica de Primer Orden — Los Teoremas de incompletitud de Gödel}
+\chapter{Unidad Temática: Lógica de Primer Orden — Los Teoremas de Incompletitud de Gödel}
 
 \renewcommand{\thesection}{\thechapter.\arabic{section}}
 
 \section{Introducción}
-Esta unidad temática presenta una exposición formal pero accesible de los Teoremas de Incompletitud de Gödel. El objetivo es combinar rigor matemático —mediante notación y resultados precisos— con explicaciones conceptuales que faciliten la comprensión de las ideas fundamentales.
+Una objeción natural al estudiar los Teoremas de Incompletitud de Gödel es que la Aritmética de Peano, a partir de ahora \AP, quizá no sea la axiomática más adecuada para describir el modelo estándar de los números naturales \( \mathbb{N} \), y que los resultados obtenidos dependan esencialmente de esta elección. 
+
+Sin embargo, el interés de los teoremas no radica en las particularidades de \AP, sino en el hecho de que cualquier sistema formal consistente y suficientemente expresivo para formalizar la aritmética elemental está sujeto a limitaciones análogas.
+
+En este trabajo se adopta la Aritmética de Peano como marco formal por su claridad y potencia expresiva, introduciendo las nociones de consistencia, coherencia y completitud necesarias para formular una versión de los Teoremas de Incompletitud. Aunque la exposición se centra en \AP, los resultados se extienden a otras teorías aritméticas que satisfacen condiciones técnicas similares, lo que pone de manifiesto el carácter general de los fenómenos de incompletitud.
 
 \section{Consistencia, coherencia y completitud}
 
 \subsection{Consistencia}
-Sea $\Phi$ un conjunto de fórmulas de un lenguaje lógico $L$. Una \emph{contradicción} es una fórmula de la forma $\varphi \land \neg\varphi$.
+Sea $\Phi$ un conjunto de fórmulas de un lenguaje lógico $L$. Llamaremos \emph{contradicción} a toda fórmula de la forma $\varphi \land \neg\varphi$, es decir, a una afirmación que sostiene simultáneamente una proposición y su negación.
 
 \begin{proposition}[\emph{Ex falso quodlibet}]
-Para un conjunto de fórmulas $\Phi$ son equivalentes:
+Dado un conjunto de fórmulas $\Phi$ y \( \varphi \) una fórmula cualquier, son equivalentes:
 \begin{enumerate}
-\item Existe una fórmula $\varphi$ tal que $\Phi \vdash \varphi \land \neg\varphi$.
-\item Para toda fórmula $\psi$, se tiene $\Phi \vdash \psi$.
+\item $\Phi \vdash \varphi \land \neg\varphi$.
+\item Para cada fórmula $\psi$, se tiene $\Phi \vdash \psi$.
 \end{enumerate}
 \end{proposition}
 
-Este principio expresa que, en presencia de una contradicción, el sistema pierde todo poder discriminatorio. Por ello, diremos que $\Phi$ es \emph{inconsistente} si demuestra alguna contradicción, y \emph{consistente} en caso contrario.
+Este principio expresa que, en presencia de una contradicción, el sistema deductivo colapsa. Esto es, el sistema pierde su capacidad para distinguir entre enunciados verdaderos y falsos. Por ello, diremos que $\Phi$ es \emph{inconsistente} si demuestra alguna contradicción, y \emph{consistente} en caso contrario.
 
 \subsection{Coherencia}
 La relación entre demostrabilidad sintáctica y verdad semántica se recoge en el siguiente resultado:
 
 \begin{theorem}[Teorema de la Coherencia]
-Sea $\Phi$ un conjunto de fórmulas y $\mathcal{M}$ un modelo tal que $\mathcal{M} \models \Phi$. Entonces, para toda fórmula $\varphi$:
+Sea $\Phi$ un conjunto de fórmulas y $\mathcal{M}$ un modelo de \( \Phi \) tal que $\mathcal{M} \models \Phi$. Entonces, para toda fórmula $\varphi$ se tiene:
 \[
-\Phi \vdash \varphi ; \Rightarrow ; \mathcal{M} \models \varphi.
+\Phi \vdash \varphi \quad \Rightarrow \quad \mathcal{M} \models \varphi.
 \]
 \end{theorem}
 
-Este teorema garantiza que el sistema lógico es \emph{correcto}: nada falso en un modelo puede ser demostrado a partir de las hipótesis verdaderas en dicho modelo.
+Este teorema garantiza que si disponemos de un modelo en el que todas las hipótesis son verdaderas, entonces toda conclusión obtenida mediante demostración formal a partir de ellas también es verdadera en dicho modelo. En otras palabras, ninguna fórmula falsa en un modelo puede ser demostrada a partir de hipótesis que son verdaderas en ese mismo modelo, lo que asegura la fiabilidad semántica del sistema deductivo.
 
 \subsection{Completitud}
-Una teoría $T$ se dice \emph{completa} si para toda fórmula cerrada $\varphi$ se cumple:
-\[
-T \vdash \varphi \quad \text{o bien} \quad T \vdash \neg\varphi.
-\]
+Una teoría $T$ se dice \emph{completa} si, para toda fórmula cerrada $\varphi$, se cumple que
+\[ T \vdash \varphi \quad \text{o bien} \quad T \vdash \neg\varphi. \]
+es decir, si toda sentencia formulable en el lenguaje de la teoría es decidible dentro de ella mediante demostración formal.
 
 El siguiente resultado clásico conecta consistencia, modelos y demostrabilidad:
 
 \begin{theorem}[Teorema de Completitud]
-Sea $\Phi$ un conjunto consistente de fórmulas. Entonces existe un modelo $\mathcal{M}$ tal que $\mathcal{M} \models \Phi$. Además, para toda sentencia $\sigma$:
-\[
-(\forall \mathcal{M} \models \Phi,; \mathcal{M} \models \sigma) \Rightarrow \Phi \vdash \sigma.
-\]
+Sea $\Phi$ un conjunto de fórmulas. Si \( \Phi \) es consistente, entonces tiene un modelo $M$. Además, sea \( \sigma \) una sentencia, si para cada modelo $M$ de \( \Phi \) se verifica que \( M \models \sigma \), entonces \( \Phi \vdash \sigma\).
 \end{theorem}
 
-Este resultado puede interpretarse como que toda verdad semántica universal es demostrable, siempre que el sistema sea consistente.
+Este resultado puede interpretarse como la afirmación de que toda verdad semántica válida en todos los modelos de una teoría consistente es, en efecto, demostrable a partir de sus axiomas. De este modo, el teorema de completitud garantiza que el sistema deductivo es suficientemente potente para capturar todas las consecuencias semánticas universales de la teoría.
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+No hay contradicción con los Teoremas de Incompletitud de Gödel porque el Teorema de Completitud se refiere a consecuencias válidas en \emph{todos los modelos} de una teoría, mientras que la incompletitud afirma la existencia de sentencias verdaderas en el modelo estándar que no lo son en todos los modelos. 
+Por tanto, dichas sentencias no son consecuencias semánticas universales y la completitud no exige que sean demostrables.
+\end{mdframed}
 
 \section{Axiomática de Peano}
 
@@ -864,7 +872,7 @@ Este resultado puede interpretarse como que toda verdad semántica universal es 
 \end{align*}
 
 
-\subsection{Aritmética y propiedades de AP}
+\subsection{Aritmética y propiedades de \AP}
 
 \section{La Función de Gödel}
 
@@ -874,33 +882,64 @@ Este resultado puede interpretarse como que toda verdad semántica universal es 
 \subsection{Lema de la diagonalización}
 
 \begin{theorem}[Lema de la diagonalización]
-Sea $\varphi(\nu)$ una fórmula con una única variable libre. Existe una sentencia $\sigma$ tal que:
+Dada una $\varphi(\nu)$ una fórmula de \AP con una única variable libre que no está ligada en \( \varphi \), existe una única sentencia de \AP llamémosla \( \sigma_\varphi \) tal que: . Existe una sentencia $\sigma$ tal que:
 \[
-\text{AP} \vdash \sigma \leftrightarrow \varphi(\ulcorner \sigma \urcorner).
+\sigma_\varphi \leftrightarrow_{\AP} \varphi(\ulcorner \sigma_\varphi \urcorner).
 \]
 \end{theorem}
 
-Este lema permite construir sentencias autorreferenciales, pieza central de la demostración de los teoremas de Gödel.
+Este lema permite construir sentencias autorreferenciales mediante su propio número de Gödel, constituyendo la herramienta fundamental de los Teoremas de Incompletitud de Gödel.
 
 \subsection{Primer Teorema de Incompletitud}
 
 \begin{theorem}[Primer Teorema de Incompletitud]
-Si la Axiomática de Peano es consistente, entonces es incompleta.
+La \AP es incompleta.
 \end{theorem}
 
-La idea de la demostración consiste en construir una sentencia que afirma su propia no demostrabilidad. Si dicha sentencia fuese demostrable o refutable, se obtendría una contradicción con la consistencia del sistema.
+\begin{proof}
+  Tomando \( \varphi(v_0) :\equiv \neg dem(v_0) \) en el lema de diagonalización sabemos que existe \( \sigma \) tal que: 
+  \[ \sigma \Leftrightarrow_{\AP} \neg dem(\ulcorner \sigma \urcorner) \]
+  Ahora, si asumimos, por reducción al absurdo, que \AP es completa, tenemos dos posibilidades: \begin{itemize}
+    \item Si \AP \(\; \vdash \sigma \), esto implica que \AP \(\; \vdash \neg dem(\ulcorner \sigma \urcorner) \). Además, se puede probar que también se verifica \AP \(\; \vdash dem(\ulcorner \sigma \urcorner) \). Es decir, \AP \(\; \vdash dem(\ulcorner \sigma \urcorner) \wedge \neg dem(\ulcorner \sigma \urcorner) \). 
+    \item Si \AP \(\; \vdash \neg \sigma \), esto implica que \( \AP \vdash \neg (\neg dem(\ulcorner \sigma \urcorner)) \), es decir, \AP \(\; \vdash \neg dem(\ulcorner \sigma \urcorner) \) y \( \mathbb{N} \models dem(\ulcorner \sigma \urcorner) \). Por tanto, tenemos \AP \(\; \vdash \sigma \), con lo cual \AP \( \sigma \wedge \neg \sigma \)
+  \end{itemize}
+  En conclusión, si \AP es consistente, entonces \AP \( \nvdash \sigma \)  y \AP \( \nvdash \neg \sigma \). Esto es, \AP es incompleta.
+\end{proof}
+
+En efecto, este teorema establece que ningún sistema formal consistente y lo suficiente expresivo como \AP puede demostrar todas las verdades aritméticas. La incompletitud surge al construir una sentencia \( \sigma \) que, mediante el lema de diagonalización, afirma su propia no demostrabilidad. Esto implica que, si \AP fuese capaz de decidir \( \sigma \), entonces generaría una contradicción, mostrando que la consistencia implica la existencia de sentencias indecibibles.
 
 \subsection{Segundo Teorema de Incompletitud}
 
 \begin{theorem}[Segundo Teorema de Incompletitud]
-Si la Axiomática de Peano es consistente, entonces no puede demostrar su propia consistencia.
+La \AP no puede probar su propia consistencia.
 \end{theorem}
 
-Este resultado muestra una limitación aún más profunda: ningún sistema formal suficientemente expresivo puede, desde dentro, garantizar formalmente que está libre de contradicciones.
+\begin{proof}
+Por el lema de diagonalización, existe \( \sigma \) tal que 
+\[ \sigma \Leftrightarrow_{\AP} \neg dem(\ulcorner \sigma \urcorner) \]
+Asumimos que \AP \(\; \vdash \neg dem(\ulcorner \sigma \wedge \neg \sigma \urcorner) \), es decir, que \AP puede demostrar que no existe una demostración de una contradicción. Para llegar a una contradicción, veamos por un resultado previo que 
+\begin{align*}
+  (\dagger) \quad dem(\ulcorner \sigma \wedge \neg \sigma \urcorner) & \Leftrightarrow_{\AP} dem(\ulcorner \sigma \urcorner) \wedge \neg dem(\ulcorner \neg \sigma \urcorner)\\
+  & \Leftrightarrow_{\AP} dem(\ulcorner \sigma \urcorner) \wedge dem(\ulcorner dem(\ulcorner \sigma \urcorner) \urcorner)
+\end{align*}
+Usando una condición de derivabilidad de Hilbert-Bernays-Löb y la Tautología de «Introducción de la Conjunción bajo Antecedente Común» obtenemos 
+\[ \AP \vdash dem(\ulcorner \sigma \urcorner) \rightarrow (dem(\ulcorner \sigma \urcorner) \wedge dem(\ulcorner dem(\ulcorner \sigma \urcorner) \urcorner)) \]
+que junto al Axioma «Eliminación de la Conjunción» demuestra 
+\[ dem(\ulcorner \sigma \urcorner) \Leftrightarrow_{\AP} dem(\ulcorner \sigma \urcorner) \wedge dem(\ulcorner dem(\ulcorner \sigma \urcorner) \urcorner) \]
+De esta forma, volviendo a añadir la negación a \( (\dagger) \), obtenemos 
+\[ \neg dem(\ulcorner \sigma \wedge \neg \sigma \urcorner) \Leftrightarrow_{\AP} \neg dem(\ulcorner \sigma \urcorner) \Leftrightarrow_{\AP} \sigma \]
+donde, recordamos, la última equivalencia se da por el Lema de Diagonalización. Por lo tanto, lo que hemos asumido implica que \AP \(\; \vdash \sigma \). Sin embargo, hemos demostrado en el Primer Teorema de Incompletitud que \AP \( \nvdash \sigma \), lo cual es una contradicción.
+\end{proof}
+
+Intuitivamente, este teorema se desprende un hecho todavía más fuerte. A saber, aunque \AP sea consistente, el propio sistema no puede demostrar que sea consistente sin generar contradicciones. La demostración utiliza una sentencia autorreferencial construida por el Lema de Diagonalización y muestra que, si \AP pudiera probar su consistencia, también podría probar una sentencia que es indecidible por el Primer Teorema de Incompletitud.
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+Aunque el Segundo Teorema de Incompletitud afirma que \AP no puede probar su propia consistencia, la consistencia de \AP \emph{sí puede demostrarse desde un punto de vista externo}. Tal es el caso de usar el modelo estándar de \( \mathbb{N} \) donde cada axioma de \AP es verdadero, y si \AP no fuera consistente entonces algún axioma sería falso en \( \mathbb{N} \); o bien podríamos formalizar \AP dentro de la teoría de conjuntos ZFC (Zermelo-Fraenkel con Axioma de Elección, la utiliza en la matemática moderna).
+\end{mdframed}
 
 \section{Conclusión}
-Los Teoremas de Incompletitud de Gödel establecen límites fundamentales a los sistemas formales y, por extensión, a los métodos algorítmicos. En informática, estos resultados subyacen a la imposibilidad de construir procedimientos automáticos universales para demostrar todas las verdades matemáticas o verificar completamente sistemas complejos.
 
+En conclusión, los Teoremas de Incompletitud de Gödel muestran que cualquier sistema consistente y suficientemente expresivo, como la Aritmética de Peano, es incompleto y no puede demostrar su propia consistencia. En efecto, estas limitaciones son inherentes a la formalización de la aritmética y se extienden a otras teorías aritméticas con propiedades similares.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
