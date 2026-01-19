@@ -22,7 +22,7 @@
 \input{polycycle}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\AP}{\textbf{AP}}
+\newcommand{\AP}{\textbf{AP }}
 
 
 \newcounter{exercise}[chapter]
@@ -903,7 +903,7 @@ La \AP es incompleta.
     \item Si \AP \(\; \vdash \sigma \), esto implica que \AP \(\; \vdash \neg dem(\ulcorner \sigma \urcorner) \). Además, se puede probar que también se verifica \AP \(\; \vdash dem(\ulcorner \sigma \urcorner) \). Es decir, \AP \(\; \vdash dem(\ulcorner \sigma \urcorner) \wedge \neg dem(\ulcorner \sigma \urcorner) \). 
     \item Si \AP \(\; \vdash \neg \sigma \), esto implica que \( \AP \vdash \neg (\neg dem(\ulcorner \sigma \urcorner)) \), es decir, \AP \(\; \vdash \neg dem(\ulcorner \sigma \urcorner) \) y \( \mathbb{N} \models dem(\ulcorner \sigma \urcorner) \). Por tanto, tenemos \AP \(\; \vdash \sigma \), con lo cual \AP \( \sigma \wedge \neg \sigma \)
   \end{itemize}
-  En conclusión, si \AP es consistente, entonces \AP \( \nvdash \sigma \)  y \AP \( \nvdash \neg \sigma \). Esto es, \AP es incompleta.
+  En conclusión, si \AP es consistente, entonces \AP \(\; \nvdash \sigma \)  y \AP \( \nvdash \neg \sigma \). Esto es, \AP es incompleta.
 \end{proof}
 
 En efecto, este teorema establece que ningún sistema formal consistente y lo suficiente expresivo como \AP puede demostrar todas las verdades aritméticas. La incompletitud surge al construir una sentencia \( \sigma \) que, mediante el lema de diagonalización, afirma su propia no demostrabilidad. Esto implica que, si \AP fuese capaz de decidir \( \sigma \), entonces generaría una contradicción, mostrando que la consistencia implica la existencia de sentencias indecibibles.
