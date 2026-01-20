@@ -1,0 +1,1140 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,top=4cm,bottom=4cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[spanish]{babel}
+\usepackage{libertinus}		
+\usepackage{inconsolata}	
+\usepackage{amsthm,amsmath,amsfonts,derivative,cancel}
+\usepackage{tikz,graphicx,titling,fancyhdr,framed} 
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{changepage}
+\usepackage{mdframed}
+\usepackage{amssymb}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Esto es para los policiclos %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\input{polycycle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\AP}{\textbf{AP }}
+
+
+\newcounter{exercise}[chapter]
+\renewcommand{\thesection}{Ejercicio \arabic{exercise}}
+\newcommand{\exercise}{%
+  \refstepcounter{exercise}%
+  \section{}%
+}
+
+\theoremstyle{definition}
+\newtheorem*{solution}{Solución}
+\newtheorem*{theorem}{Teorema}
+\newtheorem*{proposition}{Proposición}
+
+
+\lstdefinestyle{haskellstyle}{
+    language=Haskell,
+    mathescape=false,
+    escapeinside={}{},
+    texcl=false,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\bfseries\color{orange!70!black},
+    commentstyle=\itshape\color{teal!90!black},
+    stringstyle=\color{olive},
+    numbers=left,
+    numbersep=10pt,
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    framesep=6pt,
+    postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=2,
+    showstringspaces=false,
+    morekeywords={where,let,in,until,case,of,if,then,else,deriving,instance,class,newtype}
+}
+
+\title{Lógica y Programación}
+\author{Alejandro Egea López}
+\date{\today}
+
+\begin{document}
+
+\pagestyle{fancy}
+\setlength{\headheight}{13pt}
+\lhead[]{Lógica Y Programación}
+\rhead[]{Curso 2025/26}
+\cfoot{\rule{\linewidth}{0.4pt} \thepage}
+
+\begin{titlepage} 
+	\centering
+	\scshape 
+	\vspace*{\baselineskip} 
+	
+	\rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt} % Thick horizontal rule
+	\rule{\textwidth}{0.4pt}
+
+	\vspace{0.75\baselineskip}
+	{\LARGE Lógica Y Programación\\}
+	\vspace{0.3\baselineskip} 
+	
+	\rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt} % Thin horizontal rule
+	\rule{\textwidth}{1.6pt}
+	
+	\vspace{2\baselineskip}
+
+	{\Large Problemas de $\lambda$-Calculus y Lógica Combinatoria} 
+	
+	\vspace{1\baselineskip}
+
+	\includegraphics[width=0.5\textwidth]{logo.png}\par
+	
+	\vspace{2\baselineskip}
+	Universidad de Granada\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large Lógica Y Programación}
+	
+	\vspace{2\baselineskip}
+	Curso\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large 5to curso}
+
+	\vspace{2\baselineskip}
+	Docente\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large Francisco Miguel García Olmedo}
+	
+	\vspace{2\baselineskip}
+	Autores\\
+	\vspace{0.5\baselineskip}
+	{\scshape\Large Alejandro Egea López \\ Nicolás Ramírez Rodiles}
+	
+	\vfill
+	A fecha de\\
+	\today
+\end{titlepage}
+
+\pagebreak
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Problemas de $\lambda$-Calculus y Lógica Combinatoria}
+
+% EJERCICIO 1
+\exercise 
+\noindent Exponga y desarrolle justificadamente el tema de la ``Notación de de Bruijn''.\\
+
+\noindent\hrulefill\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\subsection{Introducción}
+
+La notación tradicional del cálculo $\lambda$ usa nombres para las variables ligadas
+($x,y,z,\dots$). Esta práctica introduce tres dificultades fundamentales:
+
+\begin{enumerate}
+    \item \textbf{Captura accidental}: al sustituir una expresión por una variable libre,
+          puede producirse captura si surgen colisiones de nombre con variables ligadas
+          en el contexto.
+    \item \textbf{Conversión-$\alpha$ obligatoria}: para evitar capturas debe
+          renombrarse sistemáticamente las variables ligadas.
+    \item \textbf{Complejidad en meta-demostraciones}: propiedades como la
+          confluencia o la prueba de Church-Rosser se complican debido a la
+          constante necesidad de renombrar.
+\end{enumerate}
+
+La propuesta de N.\,G. de Bruijn consiste en \emph{eliminar los nombres de variables
+ligadas} y reemplazarlos por \textbf{índices naturales} que indican cuántos ligadores
+separan la ocurrencia de su $\lambda$ correspondiente. De este modo:
+
+\begin{itemize}
+    \item desaparece por completo la conversión-$\alpha$,
+    \item no hay colisiones de nombres,
+    \item las definiciones de sustitución, reducción $\beta$ y $\eta$ se vuelven
+          puramente estructurales,
+    \item las demostraciones metateóricas se simplifican sustancialmente.
+\end{itemize}
+
+\noindent El propio de Bruijn establece tres criterios para evaluar una notación:
+\begin{enumerate}
+    \item[(i)] legibilidad humana,
+    \item[(ii)] claridad en discusión metalingüística,
+    \item[(iii)] utilidad para implementaciones automáticas.
+\end{enumerate}
+La notación de índices sacrifica parcialmente el punto (i), pero destaca en (ii) y (iii).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Name-carrying expressions y árbol sintáctico}
+
+Antes de eliminar nombres, representamos aplicaciones mediante un símbolo especial:
+\[
+A((M),(N)),
+\]
+que corresponde a la aplicación usual $MN$. Esto permite un análisis uniforme de la estructura.
+
+Consideremos ahora la siguiente expresión $\lambda$-cálculo (tomada del ejemplo del artículo):
+
+\[
+\boxed{
+\lambda x\ a(\lambda b(x,t,f(\lambda u\ a(u,t,z),\ \lambda s\ w)),w,y)
+}
+\]
+
+En forma estructurada ``name-carrying’’, cada rama del árbol lleva etiquetas $a,b,f$
+según la construcción.
+
+El artículo presenta el siguiente \textbf{árbol anotado} con \emph{reference depth} y
+\emph{level}. Los pares $(d,\ell)$ representan:
+
+\begin{itemize}
+    \item $d =$ \emph{reference depth}: número de ligadores $\lambda$ desde la
+          ocurrencia hasta su ligador,
+    \item $\ell =$ \emph{level}: número total de $\lambda$ hasta la raíz.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.35\textwidth]{tree.png}\par  
+\end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection*{Lectura precisa del árbol}
+
+Tomemos algunos nodos para ejemplificar:
+
+\begin{itemize}
+    \item El nodo $x$ tiene etiqueta $(2,2)$:
+        \begin{itemize}
+            \item reference depth $=2$: está bajo dos $\lambda$ antes de llegar a su
+                  ligador original \(\lambda_x\),
+            \item level $=2$: desde la ocurrencia hasta la raíz hay dos $\lambda$.
+        \end{itemize}
+    \item El nodo $t$ bajo $b(x,t)$ tiene $(1,2)$:
+        \begin{itemize}
+            \item depth = 1: está inmediatamente bajo $\lambda_t$,
+            \item level = 2: hay dos ligadores superiores en total.
+        \end{itemize}
+    \item El nodo $v$ etiquetado $(3,1)$ indica que:
+        \begin{itemize}
+            \item depth = 3: su ligador está tres $\lambda$ más arriba,
+            \item level = 1: solo un $\lambda$ separa esa rama de la raíz.
+        \end{itemize}
+    \item Lo mismo ocurre para $u,t,z,w$ en la rama derecha bajo $f$.
+\end{itemize}
+
+Este árbol es la base para convertir la expresión a notación sin nombres.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{De nombres a índices: notación de de Bruijn}
+
+Para cada ocurrencia ligada, sustituimos su nombre por su \emph{reference depth}.
+
+\begin{itemize}
+    \item Las variables libres se conservan en una lista ordenada
+          $(x_1,x_2,\dots)$,
+    \item Los \emph{level} sirven como información auxiliar para verificar la
+          corrección formal, pero se omiten en la expresión final.
+\end{itemize}
+
+\subsubsection*{Ejemplos simples}
+
+\[
+\lambda x.\,x \;\longmapsto\; \lambda.\,1
+\]
+
+\[
+\lambda x.\,\lambda y.\,(x\,y) \;\longmapsto\; \lambda.\,\lambda.\,(2\,1)
+\]
+
+\[
+\lambda x.\,\lambda y.\,\lambda z.\,x \;\longmapsto\; \lambda.\,\lambda.\,\lambda.\,3
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sintaxis de expresiones sin nombres}
+
+Usamos una gramática claramente indentada:
+
+\begin{verbatim}
+<NF>         ::= <Const>
+               | <Index>
+               | <NFList>
+               | lambda.<NF>
+
+<Const>      ::= a | b | c | ...         ; constantes simbólicas
+
+<Index>      ::= 1 | 2 | 3 | ...         ; variable ligada por índice
+
+<NFList>     ::= A(<NF>, <NF>)           ; aplicación
+               | <NF> <NF>               ; concatenación de expresiones
+\end{verbatim}
+
+Esta sintaxis es extremadamente regular: ya no aparecen nombres ligados, sólo índices.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sustitución en notación de de Bruijn}
+
+La sustitución se define como:
+
+\[
+S(Z_1,Z_2,\dots;\; Q),
+\]
+
+donde $Z_i$ sustituye a la variable libre cuyo índice es $i$.
+
+Casos fundamentales:
+
+\begin{itemize}
+    \item Si $Q$ es una constante, permanece igual.
+    \item Si $Q=k$ es un índice, entonces:
+          \[
+            S(\dots,Z_k;\;k) = Z_k,
+          \]
+          con ajuste de índices si la sustitución entra bajo una $\lambda$.
+    \item Si $Q=A((Q_1),(Q_2))$, entonces:
+          \[
+             S(Z;\,A((Q_1),(Q_2)))
+             = A((S(Z;Q_1)),(S(Z;Q_2))).
+          \]
+    \item Si $Q=\lambda.\,R$, entonces:
+          \[
+             S(Z_1,Z_2,\dots;\;\lambda.\,R)
+             = \lambda.\,S(Z'_1,Z'_2,\dots;\;R),
+          \]
+          donde cada $Z'_i$ es la versión de $Z_i$ con sus índices incrementados
+          en uno (para preservar referencias correctas).
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reducción $\beta$}
+
+La regla de contracción $\beta$ se expresa elegantemente:
+
+\[
+A((\lambda.\,Q),(r))
+\;\longrightarrow\;
+S(r,2,3,\dots;\;Q),
+\]
+
+es decir: sustituimos el índice $1$ por $r$.
+
+\subsubsection*{Ejemplos}
+
+\[
+(\lambda x.\,x)\;a
+\quad\leadsto\quad
+\lambda.\,1\; a
+\;\longrightarrow\; a.
+\]
+
+\[
+(\lambda x.\,\lambda y.\,x)\;y
+\quad\leadsto\quad
+A((\lambda.\,\lambda.\,2),(y))
+\;\longrightarrow\;
+\lambda.\,1.
+\]
+
+En ningún momento aparece conversión-$\alpha$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reducción $\eta$}
+
+La regla extensional:
+
+\[
+\lambda.\,A((Q),1)\;\longrightarrow\;Q
+\]
+
+siempre que $Q$ no contenga ninguna referencia al índice $1$ ligado por la $\lambda$.
+
+Ejemplo:
+
+\[
+\lambda x.\,f\,x
+\quad\longmapsto\quad
+\lambda.\,A((f),1)
+\quad\longrightarrow\quad
+f.
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Algunos comentarios sobre la reducción múltiple}
+
+De Bruijn desarrolla una teoría de \emph{reducción múltiple} $\beta_U$, donde un conjunto
+$U$ de símbolos de aplicación se reduce simultáneamente.
+
+Ideas centrales:
+
+\begin{itemize}
+    \item se define la noción de \emph{expresión $U$-correcta},  
+    \item la sustitución conserva $U$-corrección (Teorema 10.1),  
+    \item la reducción múltiple y la sustitución poseen reglas claras de
+          conmutación y composición (Teorema 11.1),  
+    \item reducciones múltiples para conjuntos distintos $U,V$ conmutan
+          entre sí (Teorema 11.2),  
+    \item todo ello conduce a una demostración pulcra del
+          \textbf{teorema de Church-Rosser} en la notación sin nombres.
+\end{itemize}
+
+En la notación de índices no existe la conversión-$\alpha$ ni conflictos de nombres,
+por lo que la demostración se vuelve más transparente: la confluencia se logra por
+propiedades puramente estructurales.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Conclusión}
+
+La notación de de Bruijn resuelve de raíz los problemas de captura y renombrado al
+sustituir nombres ligados por índices estructurales. La sustitución y la reducción
+se vuelven definiciones limpias, algebraicas y mecanizables.  
+
+La aplicación a la reducción múltiple y a la prueba de Church-Rosser muestra que la
+notación no sólo simplifica cálculos locales, sino que también clarifica la teoría
+global del cálculo $\lambda$.
+
+
+\pagebreak
+% EJERCICIO 2
+\renewcommand{\thesection}{Ejercicio \arabic{exercise}}
+\exercise 
+\noindent Demuestre que para todo $\lambda$-término $N$, \; $\lambda x.x\,K\,N \;\# \; \lambda x.x\,S\,N$. (Nota: Recuérdese que $S\equiv\lambda xyz.xz(yz)$ y $K\equiv\lambda xy.x$).
+\begin{solution}
+Supongamos, por reducción al absurdo, que $\lambda x.x\,K\,N = \lambda x.x\,S\,N$ y vamos a llegar a la contradicción de que $K=S$, lo cual es imposible porque \( S\#K \) por clase.\\
+
+\noindent En primer lugar, aplicamos la ``regla 3'' con \( Z=K \), de modo que 
+\[ \lambda x.x\,K\,N \; = \; \lambda x.x\,S\,N \Rightarrow (\lambda x.x\,K\,N)K \; = \; (\lambda x.x\,S\,N)K \]
+Ahora bien, aplicando ``$\beta$-conversión'' y ``sustitución 1'' obtenemos que 
+\[ (\lambda x.x\,K\,N)K = KKN \qquad \text{ y } \qquad (\lambda x.x\,S\,N)K = KSN \]
+tal que, por transitividad, obtenemos \[ KKN = KSN \]
+Finalmente, basta con aplicar la propia definición de K, concluyendo por transitividad que \[ KKN=K \qquad \text{ y } \qquad KSN = S \]
+\[ \Rightarrow K=S \]
+lo cual es una contradicción.
+\end{solution}
+
+\pagebreak
+% EJERCICIO 3
+\exercise 
+\noindent Dibuje razonadamente el grafo $G_\beta(WWW)$, donde $W\equiv\lambda xy.xyy$.
+\begin{solution}
+Primero, es interesante recordar la definición del grafo de $\beta$-conversión de un $\lambda$-término tal que 
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+El grafo de $\beta$-conversión de un $\lambda$-término T (o grafo de reducción de un $\lambda$-término T), que denotaremos por \( G_\beta(T) \), verifica:
+\begin{enumerate}
+  \item Un $\lambda$-término $M$ es un nodo de \( G_\beta(T) \) si \( \lambda \vdash T = M  \). 
+  \item Si \( M_1,M_2 \) son nodos distintos de \( G_\beta(T) \), entonces \( M_1 \not\equiv M_2 \) (en particular, admite \( M_1 =_\beta M_2 \)).
+  \item \( n\geq 1 \) aristas unen nodo \( M_1 \) a nodo \( M_2 \) (pudiendo ser \( M_1 \equiv M_2 \)) si, y solo si, \( \lambda \vdash M_1 = M_2 \)
+\end{enumerate}
+\end{mdframed}
+
+\noindent Comencemos por reducir el $\lambda$-término $(WWW)$: 
+\begin{align*}
+  WWW & \equiv (\lambda xy.xyy)WW \\
+  & = (\lambda y.xyy[x:=W])W \qquad\text{por $\beta$-conversión}\\
+  & = (\lambda y.Wyy)W \qquad\text{por sustitución (4) } \\
+  & = (Wyy [y:=W]) \qquad\text{por $\beta$-conversión}\\
+  & = WWW \qquad\text{por sustitución (4) } \\
+\end{align*} 
+En efecto, tenemos dos $\lambda$-términos no iguales (en el sentido de $\equiv$). Y \( G_\beta(WWW) \) es
+
+\begin{center}
+\polycycleShort[2]{
+  $\mathrm{WWW}$,
+  $(\lambda y.Wyy)W$
+}
+\end{center}
+
+\end{solution}
+
+\pagebreak
+% EJERCICIO 4
+\exercise 
+\noindent Encuentre razonadamente un $\lambda$-término $M$ tal que $G_\beta(M)$ sea exactamente:
+
+\begin{solution}
+Sea el candidato \( M \equiv NNI \) donde \[ N \equiv \lambda xy.yyyxxy \qquad\text{e}\qquad I \equiv \lambda x.x \] y veamos que \( G_\beta(M) \) es el grafo del enunciado. Sabiendo que \( II \equiv (\lambda x.x)I = I \), tenemos que
+\begin{align*}
+  NNI & \equiv (\lambda xy.yyyxxy)NI \\
+  & = (\lambda y.yyyNNy)I \\
+  & = IIINNI \\ 
+  & = IINNI \\
+  & = INNI \\
+  & = NNI \qquad\text{(¡hemos cerrado el ciclo!)}  
+\end{align*} 
+En efecto, tenemos cinco $\lambda$-términos no iguales (en el sentido de $\equiv$). Y \( G_\beta(M) \) es
+
+\begin{center}
+\polycycle[5]{
+  $\mathrm{NNI}$,
+  $(\lambda y.yyyNNy)I$,
+  $IIINNI$,
+  $IINNI$,
+  $INNI$
+}
+\end{center}
+
+Vamos a explorar un poco más este $\lambda$-término que hemos propuesto. Presentamos las siguientes definiciones: 
+\[ N_k = \lambda xy.\underbrace{y \cdots y}_{\text{k veces}}xxy \qquad\text{y}\qquad C_{k+2}=N_k N_k I \qquad\text{para } k \in \mathbb{N} \]
+
+Así pues, estas definiciones nos conducen a plantear el siguiente lema.
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+  \begin{center}
+    \( G_\beta(C_{k+2}) \) es un grafo de reducción cíclico de \( k+2 \) nodos para todo \( k \in \mathbb{N} \).
+  \end{center}
+\end{mdframed}
+
+Por una parte, veamos el caso base \( k=0 \) tal que \( N_0=\lambda xy.xxy \) y por ende, \( C_2=N_0 N_0 I \). Tras la primera parte del ejercicio, es inmediato comprobar que \( (\lambda y.N_0 N_0 y)I = N_0 N_0 I \) se trata de \( G_\beta(C_2) \) cíclico de 2 nodos. Cabe destacar que el caso base constituye un caso \textit{degenerado}, puesto que \textit{un ciclo de dos nodos no es más que el segmento que los une}.
+
+\begin{center}
+\polycycleShort[2]{
+  $\mathrm{N_0N_0I}$,
+  $(\lambda y.N_0N_0y)I$
+}
+\end{center}
+\end{solution}
+
+Por otra parte, veamos el caso para un $k>0$ arbitrario tal que \( N_k = \lambda xy.\underbrace{y \cdots y}_{\text{k veces}}xxy \), es decir
+\begin{align*}
+  C_{k+2} = N_k N_k I = (\lambda xy.\underbrace{y \cdots y}_{\text{k veces}}xxy) N_k I & = \\
+  & =  (\lambda y.\underbrace{y \cdots y}_{\text{k veces}}N_kN_ky) I \\
+  & = \underbrace{I \cdots I}_{\text{k veces}}N_kN_k I \\
+  & = \underbrace{I \cdots I}_{\text{k-1 veces}}N_kN_k I \\
+  & = \dots \\
+  & = I N_kN_k I \\
+  & = N_kN_kI
+\end{align*}
+
+En conclusión, es inmediato observar que hay \( k+2 \) $\lambda$-términos no iguales (en el sentido de $\equiv$) y así podemos hacer que \( G_\beta(C_{k+2}) \) sea un policiclo de cualquier número \textbf{finito} de nodos mayor o igual que 2.
+
+\begin{center}
+\polycycle[5]{
+  $\mathrm{N_kN_kI}$,
+  $(\lambda y.\underbrace{y \cdots y}_{\text{k veces}}N_kN_ky) I$,
+  $\underbrace{I \cdots I}_{\text{k veces}}N_kN_k I$,
+  $\dots$,
+  $I N_kN_k I$
+}
+\end{center}
+
+\pagebreak
+% EJERCICIO 5
+\exercise 
+\noindent Sea el $\lambda$-término: \[ G \equiv \lambda yx.x(yx) \qquad\text{y}\qquad M \equiv (\lambda xy.y(xxy))(\lambda xy.y(xxy)).\]
+\begin{enumerate}
+\item Demuestre que $M$ es un punto fijo de $G$.
+\item Demuestre que si el combinador $N$ es un punto fijo de $G$, entonces $N$ es un operador de punto fijo.
+\item Demuestre que $M$ es un combinador de punto fijo.
+\item Demuestre que si $M$ es un combinador de punto fijo, entonces $M = GM$.
+\end{enumerate}
+\begin{solution}
+\mbox{} \\
+
+\textbf{(1)} Si aplicamos el Teorema del Punto Fijo al $\lambda$-término G, sean $y$ tal que \( y \notin FV(G) \), \( W=\lambda z.G(zz) \) y \( X=WW \), entonces obtenemos que \( X = M \) es punto fijo de $G$. En efecto, 
+\begin{align*}
+  X & \equiv \\
+  & \equiv WW \\
+  & = (\lambda yx.x(yyx))(\lambda yx.x(yyx)) \qquad\text{por $(\dagger)$}\\
+  & \equiv (\lambda xy.y(xxy))(\lambda xy.y(xxy)) \qquad\text{por $\alpha$-congruencia}
+\end{align*}
+donde \((\dagger)\) resulta por
+\begin{align*}
+  W & \equiv \\
+  & \equiv \lambda y.G(yy) \\
+  & \equiv \lambda y.(\lambda yx.x(yx))(yy) \\
+  & = \lambda y.((\lambda x.x(yx))[y:=yy]) \qquad\text{por $\beta$-conversión}\\
+  & \equiv \lambda y.\lambda x.x(yyx) \qquad\text{por sustitución (1)}\\
+  & = \lambda yx.x(yyx)
+\end{align*}
+
+\textbf{(2)} Supongamos que el combinador $N$ es un punto fijo de $G$, es decir, \( N = GN \). Por esto,
+\begin{align*}
+  N & = \\
+  & = GN \\
+  &\equiv (\lambda yx.x(yx))N \\
+  &= \lambda x.((x(yx))[y:=N]) \qquad\text{por $\beta$-conversión}\\
+  &\equiv \lambda x.x(Nx) \qquad\text{por sustitución 1}\\
+\end{align*}
+Y concluimos que, dado $F$ un $\lambda$-término,
+\begin{align*}
+  NF & = \\
+  & = (\lambda x.x(Nx))F \\
+  & = (x(Nx))[x:=F] \qquad\text{por $\beta$-conversión}\\
+  & = F(NF) \qquad\text{por sustitución 1}
+\end{align*}
+que es precisamente lo que se quería demostrar. \\
+
+\textbf{(3)} Vamos a presentar una forma inmediata de resolver el ejercicio y otra más didáctica.
+
+Por una parte, $M$ es claramente un combinador porque ninguna variable ocurra libre y, además, es punto fijo de $G$ por el apartado (1). Tenemos que verifica las hipótesis del apartado (2) y por tanto, $M$ es un operador (o combinador) de punto fijo. 
+
+Por otra parte, si denotamos por \( W:=\lambda xy.y(xxy) \) tenemos que 
+\begin{align*}
+  M & = \\
+  & \equiv WW \\
+  & \equiv (\lambda xy.y(xxy))W \\
+  & = \lambda y.((y(xxy))[x:=W]) \qquad\text{por $\beta$-conversión}\\
+  & \equiv \lambda y.y(WWy) \qquad\text{por sustitución 1}\\
+  & \equiv \lambda y.y(My) \qquad\text{denotamos por \((\dagger)\)}
+\end{align*}
+Y llegamos a que, dado $F$ un $\lambda$-término,
+\begin{align*}
+  MF & = \\
+  & = (\lambda y.y(My))F \qquad\text{por \((\ddagger)\)}\\
+  & = (y(My))[y:=F] \qquad\text{por $\beta$-conversión}\\
+  & \equiv F(MF)  \qquad\text{por sustitución 1}\\
+\end{align*}
+es decir, que $M$ es un combinador de punto fijo.\\
+
+\textbf{(4)} Supongamos que $N$ es un combinador de punto fijo, es decir, para todo $F$ $\lambda$-término \( NF=F(NF) \). Tomando el $G$ del enunciado tenemos que 
+\begin{align*}
+  GM & = \\
+  & \equiv (\lambda yx.x(yx))N \\
+  & = \lambda x.((x(yx))[y:=N]) \qquad\text{por $\beta$-conversión}\\
+  & \equiv \lambda x.x(Nx)  \qquad\text{por sustitución 1}\\
+\end{align*}
+
+Ahora bien, si tomamos \( T=GN \) llegamos a que
+\begin{align*}
+  TF = \\
+  & = GNF \qquad\text{por regla 3}\\
+  & = (\lambda x.x(Nx))F \\
+  & = (x(Nx))[x:=F] \qquad\text{por $\beta$-conversión}\\
+  & = F(NF) \qquad\text{por sustitución 1}\\
+\end{align*}
+Finalmente, aplicamos la hipótesis obteniendo que \( TF=F(NF)=NF \), y de nuevo, por la regla 3, tenemos que \( T=N \).
+
+Como partíamos de que \( T=GN \), efectivamente llegamos a que \( N=GN \), es decir, $N$ es punto fijo de $G$.
+
+\end{solution}
+
+
+\pagebreak
+% EJERCICIO 6
+\exercise 
+\noindent Considere el combinador:
+\[ Y\equiv \lambda y.(\lambda x.y(xx))(\lambda x.y(xx)) \]
+y demuestre que $GY = Y$.
+\begin{solution}
+Probemos que $Y$ es un combinador de punto fijo para que, aplicando el Ejercicio 5 (d), concluyamos que \( Y=GY \).
+Es decir, debemos probar que para cada $F$ $\lambda$-término se tiene que \( YF=F(YF) \), que es inmediato por $\beta$-conversión tal que 
+\begin{align*}
+  YF & \equiv \\
+  & \equiv (\lambda y.(\lambda x.y(xx))(\lambda x.y(xx)))F \\
+  & = ((\lambda x.y(xx))(\lambda x.y(xx)))[y:=F] \qquad\text{por $\beta$-conversión}\\
+  & \equiv (\lambda x.y(xx))[y:=F](\lambda x.y(xx))[y:=F] \qquad\text{por sustitución 6}\\
+  & \equiv (\lambda x.F(xx))(\lambda x.F(xx)) \qquad\text{por sustitución 1}\\
+  & \equiv \omega \omega 
+\end{align*}
+Y ahora bastaría continuar reduciendo \( YF=\omega \omega \) tal que
+\begin{align*}
+  \omega \omega & = \\
+  & = F(xx)[x:=\omega] \qquad\text{por $\beta$-conversión}\\
+  & \equiv F(\omega\omega) \qquad\text{por sustitución 1}\\
+  & \equiv F(YF) \qquad\text{por el cálculo previo}\\
+\end{align*}
+Por lo tanto, hemos probado que $Y$ es combinador de punto fijo, con lo cual afirmamos que \( Y=GY \).
+\end{solution}
+
+\pagebreak
+% EJERCICIO 7
+\exercise 
+\noindent Considere la sucesión de combinadores $\{Y^n\}_n$ definida para todo número natural $n$ como sigue:
+\[ Y^n = \begin{cases} Y, &\text{si } n=0, \\ Y^{n-1}G, &\text{si } n>0. \end{cases} \]
+Demuestre que para todo $n\ge 0$, $Y^n$ es un combinador de punto fijo.
+\begin{solution}
+Razonamos por inducción sobre \( n\geq 0 \). Por una parte, el caso base \( \boxed{n=0} \) es \( Y^0=Y \), que es claramente un combinador de punto fijo por el Ejercicio 6.
+
+Por otra parte, veamos el caso inductivo \( \boxed{S(k) \Rightarrow S(k+1) \, \forall k>0} \) donde la hipótesis de inducción es \( S(k)=\text{«$Y^k$es un combinador de punto fijo»} \). Queremos demostrar que \( S(k+1) \), y procedemos de la siguiente manera 
+\[ Y^{k+1} \overset{def.}{=} Y^k G \overset{H.I.}{=} G(Y^k G) \overset{def.}{=} G(Y^{k+1})  \]
+En efecto, como \( Y^{k+1} = G(Y^{k+1}) \), entonces \( Y^{k+1} \) es un combinador de punto fijo como se quería demostar, completando la inducción.
+\end{solution}
+
+\pagebreak
+% EJERCICIO 8
+\exercise 
+\noindent Encuentre razonadamente el CL-término $(\lambda xy.xyy)_{CL}$.
+\begin{solution}
+En primer lugar, escribimos el $\lambda$-término como un CL-término de tipo `[x].M' (que usaremos solo para permitir la conversión $\lambda \to CL$, pero que no es un CL-término en sí mismo):
+\[ (\lambda xy.xyy)_{CL} \to [xy].xyy, \]
+y, por definición de abstracción de múltiples variables, obtenemos que 
+\[ [xy].xyy \equiv [x]([y].xyy) \]
+de modo que ya podemos proceder a aplicar las reglas de abstracción (a), (b), (c), (f) (las que se requieran). A modo de recordatorio:
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+\textbf{Definition 2.18 (Abstraction).}
+Para todo término de CL llamémoslo $M$ y toda variable $x$, se define por inducción un término de CL llamado $[x].M$ del siguiente modo:
+\begin{enumerate}
+  \item[(a)] $[x].M \equiv K M$ si $x \notin FV(M)$.
+  \item[(b)] $[x].x \equiv I$.
+  \item[(c)] $[x].Ux \equiv U$ si $x \notin FV(U)$.
+  \item[(f)] $[x].UV \equiv S([x].U)([x].V)$ si no se aplica ninguna de las reglas anteriores.
+\end{enumerate}
+*Cabe destacar que la referencia prescinde de las reglas (d) y (e); y que en [x].UV usando la regla (f), V es siempre la parte derecha de la aplicación más externa del término.
+\end{mdframed}
+Vamos a operar según las reglas (*las reglas se enuncian en orden de aplicación):
+\begin{align*}
+  [x].([y].xyy) & \equiv \\
+  & \equiv [x].(S([y].xy)([y].y))  \qquad\text{por regla (f)}\\
+  & \equiv [x].((Sx)I)  \qquad\text{por regla (c) y (b)}\\
+  & \equiv S([x].(Sx))([x].I) \qquad\text{por regla (f)}\\
+  & \equiv S(S)(KI) \qquad\text{por regla (c) y (a)}\\
+  & \equiv SSKI \\
+\end{align*}
+
+Y por último, podemos aplicar las propias definiciones de los combinadores S, K, I para simplificar la expresión tal que
+\begin{align*}
+  SSKI & \equiv \\
+  & \equiv SI(KI)
+\end{align*}
+
+Sin embargo, esta reducción no produce una expresión conceptualmente más simple. Por ello, aceptamos como solución final el combinador
+\[ \boxed{SSKI} \]
+
+\end{solution}
+
+\pagebreak
+% EJERCICIO 9
+\exercise 
+\noindent Esquematice la relación entre el sistema $\lambda$ y la lógica combinatoria.
+
+\noindent\hrulefill\\
+
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+\subsection{Introducción}
+
+El sistema $\lambda$ y la lógica combinatoria son dos sistemas equivalentes en poder expresivo, pero con distintos enfoques. El $\lambda$-cálculo usa variables, abstracción $(\lambda x.M)$, sustitución y $\alpha$-conversión mientras que la lógica combinatoria trabaja únicamente con aplicación y combinadores ($S, K, I$, etc.). Para profundizar más en cómo se relacionan, se hará una definición formal de la lógica combinatoria para después relacionarlo con el sistema $\lambda$.
+
+\subsection{Términos y combinadores de CL}
+
+Los sistemas de combinadores realizan la misma funcionalidad que el $\lambda$-cálculo sin el uso de variables ligadas. Un combinador es un término cerrado de la lógica combinatoria, es decir, un término que no contiene variables y que se construye únicamente mediante aplicación y constantes combinatorias. Hay un número infinito de combinadores de los cuales tres se denominan combinadores básicos:
+\begin{itemize}
+    \item \textbf{I}, el operador identidad: $\textbf{I}(f) = f$
+    \item \textbf{K}, combinador que forma funciones constantes: $(\textbf{K}(a))(x) = a$
+    \item \textbf{S}, el operador de composición: $(\textbf{S}(f,g))(x) = f(x,g(x))$
+\end{itemize}
+
+\noindent El alfabeto de los términos de la lógica combinatoria es el compuesto por los siguientes símbolos: 
+\begin{itemize}
+    \item símbolos de variable $v_0, v_{00}, v_{000}$
+    \item constantes atómicas, incluyendo los combinadores básicos.  
+\end{itemize}
+El conjunto de términos de la lógica combinatoria se define inductivamente como sigue:
+
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item Toda variable y toda constante atómica es un término;
+  \item si $X$ e $Y$ son términos,  entonces $(XY)$ también lo es.
+\end{enumerate}
+
+Cualquier sucesión finita de elementos del alfabeto de términos es un término de la lógica combinatoria. Por ejemplo:
+\[ \textbf{((S(KS))K)},\qquad\qquad\textbf{((S($Kv_0$))((SK)K))}\]son ambos términos de la lógica combinatoria, siendo el primero además un combinador. 
+
+\noindent Conociendo los términos podemos definir la relación \textit{X ocurre en Y}, o \textit{X es un subtérmino de Y}: 
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item $X$ ocurre en $X$
+  \item si $X$ ocurre en $U$ o en $V$, entonces $X$ ocurre en $(UV)$
+\end{enumerate}
+Es importante destacar que todas las variables que ocurran en un término $Y$ pertenecen a FV($Y$) puesto que no hay ningún $\lambda$ que las capture.
+
+\subsection{Sustitución y sustitución débil}
+
+Al igual que en el $\lambda$-cálculo, la lógica combinatoria también define la sustitución de términos de forma recursiva. $[U/X]Y$ se define recursivamente como el resultado de sustituir el término $U$ por cada ocurrencia de $x$ en $Y$ de la siguiente forma: 
+
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})} 
+  \item $[U/x]x \equiv U,$
+  \item $[U/x]a \equiv a$ si $a \not\equiv x$
+  \item $[U/x](VW) \equiv ([U/x]V[U/x]W). $ 
+\end{enumerate}
+
+La lógica combinatoria carece de $\beta$ reducción, por lo que la computación se define mediante reglas de reducción para \textbf{I, K} y \textbf{S}. Cualquier término $\textbf{I}X$, $\textbf{K}YZ$ o $\textbf{S}XYZ$ se denomina un \textit{redex débil. Contraer} un redex débil significa reducir los términos de la siguiente forma:  
+\begin{itemize}
+    \item $\mathbf{I}X \to X$,
+    \item $\mathbf{K}XY \to X$,
+    \item $\mathbf{S}XYZ \to XZ(YZ)$.
+\end{itemize}
+Si mediante una de estas reglas $U$ pasa a $U'$, se dice que \textit{U se contrae débilmente a U'} expresado notacionalmente como 
+\[U\to_{1w}U'\]
+Si $U'$ se obtiene a partir de una sucesión finita de reducciones débiles, se dice que \textit{reduce débilmente a U'}, o  
+\[U\to_wU'\]
+
+\subsection{Eliminación de la abstración $\lambda$}
+
+Dado que la lógica combinatoria carece de abstracción $\lambda$, es necesario introducir un mecanismo que permita representar funciones con parámetros. Esto se logra mediante la construcción meta-teórica $[x].M$ que traduce la abstracción del cálculo lambda a un término de lógica combinatoria con la propiedad de que \[([x].M)N\to_w[N/x]M.\]
+El término teórico $[x].M$, que no es un CL-término en sí mismo, actuará de forma equivalente a $\lambda x.M$ y se creará como una combinación de los términos \textbf{I, K} y \textbf{S} de la siguiente forma: 
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item $[x].M \equiv \mathbf{K}M \qquad \text{si } x \notin FV(M)$;
+  \item $[x].x \equiv \mathbf{I}$;
+  \item $[x].(Ux) \equiv U \qquad \text{si } x \notin FV(U)$;
+  \item $[x].(UV) \equiv \mathbf{S}([x].U)([x].V) \qquad \text{si no se aplican (a) ni (c).}$
+\end{enumerate}
+
+\noindent Por ejemplo: 
+ \begin{align*}
+  [x].(xy) &\equiv \textbf{S}(([x].x)([x].y) \qquad\text{por regla (f)}\\
+  & \equiv \textbf{SI}\text{(}\textbf{K}\text{y)} \qquad \text{por (b) y (a).}\\
+\end{align*}
+\noindent
+Así, la propiedad fundamental de la abstracción, esto es,
+\[
+([x].M)N \to_w [N/x]M,
+\]
+muestra que el término combinatorio $[x].M$ reproduce exactamente el comportamiento de la abstracción $\lambda x.M$ bajo aplicación, siendo la reducción débil el análogo de la $\beta$-reducción del cálculo lambda.
+
+\subsection{Conclusión}
+
+En consecuencia, toda abstracción del cálculo $\lambda$ puede eliminarse sistemáticamente mediante la construcción $[x].M$, obteniendo un término de la lógica combinatoria formado únicamente por aplicación y combinadores básicos. Este procedimiento permite traducir cualquier término del cálculo lambda a un término combinatorio que preserva su comportamiento computacional.
+
+Por tanto, la lógica combinatoria constituye una reformulación del cálculo $\lambda$ sin variables ligadas ni abstracción explícita, pero con el mismo poder expresivo. Ambos sistemas describen la misma clase de funciones computables, diferenciándose únicamente en el enfoque sintáctico utilizado para representar la noción de función.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Unidad Temática: Lógica de Primer Orden — Los Teoremas de Incompletitud de Gödel}
+
+\renewcommand{\thesection}{\thechapter.\arabic{section}}
+
+\section{Introducción}
+Una objeción natural al estudiar los Teoremas de Incompletitud de Gödel es que la Aritmética de Peano, a partir de ahora \AP, quizá no sea la axiomática más adecuada para describir el modelo estándar de los números naturales \( \mathbb{N} \), y que los resultados obtenidos dependan esencialmente de esta elección. 
+
+Sin embargo, el interés de los teoremas no radica en las particularidades de \AP, sino en el hecho de que cualquier sistema formal consistente y suficientemente expresivo para formalizar la aritmética elemental está sujeto a limitaciones análogas.
+
+En este trabajo se adopta la Aritmética de Peano como marco formal por su claridad y potencia expresiva, introduciendo las nociones de consistencia, coherencia y completitud necesarias para formular una versión de los Teoremas de Incompletitud. Aunque la exposición se centra en \AP, los resultados se extienden a otras teorías aritméticas que satisfacen condiciones técnicas similares, lo que pone de manifiesto el carácter general de los fenómenos de incompletitud.
+
+\section{Consistencia, coherencia y completitud}
+
+\subsection{Consistencia}
+Sea $\Phi$ un conjunto de fórmulas de un lenguaje lógico $L$. Llamaremos \emph{contradicción} a toda fórmula de la forma $\varphi \land \neg\varphi$, es decir, a una afirmación que sostiene simultáneamente una proposición y su negación.
+
+\begin{proposition}[\emph{Ex falso quodlibet}]
+Dado un conjunto de fórmulas $\Phi$ y \( \varphi \) una fórmula cualquier, son equivalentes:
+\begin{enumerate}
+\item $\Phi \vdash \varphi \land \neg\varphi$.
+\item Para cada fórmula $\psi$, se tiene $\Phi \vdash \psi$.
+\end{enumerate}
+\end{proposition}
+
+Este principio expresa que, en presencia de una contradicción, el sistema deductivo colapsa. Esto es, el sistema pierde su capacidad para distinguir entre enunciados verdaderos y falsos. Por ello, diremos que $\Phi$ es \emph{inconsistente} si demuestra alguna contradicción, y \emph{consistente} en caso contrario.
+
+\subsection{Coherencia}
+La relación entre demostrabilidad sintáctica y verdad semántica se recoge en el siguiente resultado:
+
+\begin{theorem}[Teorema de la Coherencia]
+Sea $\Phi$ un conjunto de fórmulas y $\mathcal{M}$ un modelo de \( \Phi \) tal que $\mathcal{M} \models \Phi$. Entonces, para toda fórmula $\varphi$ se tiene:
+\[
+\Phi \vdash \varphi \quad \Rightarrow \quad \mathcal{M} \models \varphi.
+\]
+\end{theorem}
+
+Este teorema garantiza que si disponemos de un modelo en el que todas las hipótesis son verdaderas, entonces toda conclusión obtenida mediante demostración formal a partir de ellas también es verdadera en dicho modelo. En otras palabras, ninguna fórmula falsa en un modelo puede ser demostrada a partir de hipótesis que son verdaderas en ese mismo modelo, lo que asegura la fiabilidad semántica del sistema deductivo.
+
+\subsection{Completitud}
+Una teoría $T$ se dice \emph{completa} si, para toda fórmula cerrada $\varphi$, se cumple que
+\[ T \vdash \varphi \quad \text{o bien} \quad T \vdash \neg\varphi. \]
+es decir, si toda sentencia formulable en el lenguaje de la teoría es decidible dentro de ella mediante demostración formal.
+
+El siguiente resultado clásico conecta consistencia, modelos y demostrabilidad:
+
+\begin{theorem}[Teorema de Completitud]
+Sea $\Phi$ un conjunto de fórmulas. Si \( \Phi \) es consistente, entonces tiene un modelo $M$. Además, sea \( \sigma \) una sentencia, si para cada modelo $M$ de \( \Phi \) se verifica que \( M \models \sigma \), entonces \( \Phi \vdash \sigma\).
+\end{theorem}
+
+Este resultado puede interpretarse como la afirmación de que toda verdad semántica válida en todos los modelos de una teoría consistente es, en efecto, demostrable a partir de sus axiomas. De este modo, el teorema de completitud garantiza que el sistema deductivo es suficientemente potente para capturar todas las consecuencias semánticas universales de la teoría.
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+No hay contradicción con los Teoremas de Incompletitud de Gödel porque el Teorema de Completitud se refiere a consecuencias válidas en \emph{todos los modelos} de una teoría, mientras que la incompletitud afirma la existencia de sentencias verdaderas en el modelo estándar que no lo son en todos los modelos. 
+Por tanto, dichas sentencias no son consecuencias semánticas universales y la completitud no exige que sean demostrables.
+\end{mdframed}
+
+\section{Axiomática de Peano}
+Los teoremas de incompletitud de Gödel exigen una aritmética con suma, multiplicación y cuantificación sobre números para poder codificar fórmulas y demostraciones. Esto es exactamente lo que proporciona la axiomática de Peano, publicada en 1889 por Giuseppe Peano. 
+\subsection{Axiomas de Peano}
+En esta memoria se adopta la axiomatización de Peano en lógica de primer orden con símbolos: 
+\begin{description}
+  \item[$0)$] Símbolo de constante que llamaremos $0$.
+  \item[$s)$] Símbolo de una función de aridad $1$ que llamaremos sucesor.
+  \item[$+$)] Símbolo de una función de aridad $2$ que llamaremos suma.
+  \item[$\cdot)$] Símbolo de una función de aridad $2$ que llamaremos multiplicación.
+\end{description}
+
+La teoría \textbf{AP} está formada por los siguientes axiomas: 
+\begin{align*}
+\text{AP0: }& \neg \exists x,(s(x) = 0) \\
+\text{AP1: }& \forall x\forall y,(s(x) = s(y) \rightarrow x = y) \\
+\text{AP2: }& \forall x,(x + 0 = x) \\
+\text{AP3: }& \forall x\forall y,(x + s(y) = s(x + y)) \\
+\text{AP4: }& \forall x,(x \cdot 0 = 0) \\
+\text{AP5: }& \forall x\forall y,(x \cdot s(y) = (x \cdot y) + x)
+\end{align*}
+
+\subsection{Aritmética y propiedades de AP}
+A partir de los axiomas de Peano, podemos definir nuevas constantes, funciones y relaciones. Interpretaremos las fórmulas aritméticas de la teoría de Peano en el sentido usual sobre los números naturales $\mathbb{N}$. Por ejemplo, podemos definir la relación de orden como: 
+\begin{align*}
+&x \leq y \iff \exists r\,(x+r = y),\\
+&x < y \iff x \leq y \land x \neq y,\\
+&x \geq y \iff y \leq x,\\
+&x > y \iff y < x.
+\end{align*}
+
+\begin{theorem}[Propiedades básicas del orden en \textbf{AP}]
+Se verifican en la teoría \textbf{AP} las siguientes propiedades del orden:
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item $\mathbf{AP} \vdash \forall x \,(x \leq x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \,((x \leq y \wedge y \leq x) \rightarrow x = y)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \forall z \,((x \leq y \wedge y \leq z) \rightarrow (x \leq z))$
+  \item $\mathbf{AP} \vdash \forall x \,(0 \leq x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \,(x \leq y \vee y \leq x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \,(x < y \vee x = y \vee y < x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \forall z \,(x \leq y \rightarrow x + z \leq y + z)$
+\end{enumerate}
+\end{theorem}
+
+Además de las propiedades básicas del orden, la teoría \textbf{AP} permite formalizar y demostrar propiedades elementales de la suma y el producto que reflejan su comportamiento usual en los números naturales. En particular, dentro de \textbf{AP} se pueden demostrar, entre otras, las siguientes propiedades, cuya demostración es de poco interés en esta memoria por lo que hemos decidido omitirlas:
+
+\begin{itemize}
+\item Asociatividad de la suma:
+\[\textbf{AP} \vdash \forall x \forall y \forall z \,(x + (y + z) = (x + y) + z),\]
+  
+\item Propiedad cancelativa de la suma:
+\[\textbf{AP} \vdash \forall x \forall y \forall z \,(x + y = x + z \rightarrow y = z)\]
+
+\item Propiedades de las fórmulas de desigualdad: \begin{align*}
+  & \textbf{AP} \vdash \forall x \forall y (x < sy \leftrightarrow x \leq y) \\
+  & \textbf{AP} \vdash \forall x \forall y (x < y \leftrightarrow sx \leq y) \\
+\end{align*}
+\item Propiedades de la divisibilidad: \begin{align*}
+  & \textbf{AP} \vdash \forall x \forall y \forall z \leq y (x \mid y \land x \mid z \rightarrow x \mid y \pm z) \\
+  & \textbf{AP} \vdash \forall x \forall y \forall z (x \mid y\rightarrow x \mid yz)
+\end{align*}
+\end{itemize}
+En la demostración de los teoremas también está implícito el concepto de coprimalidad: 
+
+\begin{align*}
+  & \textbf{AP} \vdash \forall x \forall y \forall k \,(k \mid x \land coprimos(x,y) \rightarrow coprimos(k, y)) \\
+  & \textbf{AP} \vdash \forall k \forall y \neq 0\forall j \,(k \mid y \rightarrow coprimos(1 + (j + k)y, 1 + jy)) \\
+  & \textbf{AP} \vdash \forall x \forall y (coprimos(x,y) \leftrightarrow (x \neq 0 \land y \neq 0 \land \forall z ((z \mid x \land z \mid y) \rightarrow z = 1)))
+\end{align*}
+
+La codificación aritmética utilizada en la numeración de Gödel se basa en la construccion de múltiplos comunes: 
+
+\[\textbf{AP} \vdash \forall m \exists y \forall k ((k \neq 0 \land k \leq m ) \rightarrow k \mid y) \]
+
+Finalmente, veamos como podemos definir funciones en \textbf{AP} mediante fórmulas. Diremos que una función
+\[
+F(x_1,\dots,x_n) = y \;\;:\Longleftrightarrow\;\; \varphi(x_1,\dots,x_n,y)
+\]
+es \emph{definible en \textbf{AP}} si existe una fórmula \(\varphi\) tal que, para cada elección de los argumentos \(x_1,\dots,x_n\), existe un único valor \(y\) que satisface \(\varphi(x_1,\dots,x_n,y)\).  
+En este caso diremos que \(\varphi\) es funcional.
+
+Este concepto permite construir el máximo de un dominio finito de una función definible en  \textbf{AP}  como expresa el siguiente resultado. 
+
+Sea \(F\) una función definible en \textbf{AP}. Entonces:
+
+\[\textbf{AP} \vdash \forall k > 0 \exists !x(\exists i < k (F(i) = x) \land \forall j < k (F(j) \leq x)) \]
+
+Las propiedades anteriores garantizan que la teoría \textbf{AP} reproduce internamente el comportamiento aritmético habitual de los números naturales. Este hecho es esencial para poder definir, dentro de la propia teoría, funciones y relaciones aritméticas para codificar fórmulas, secuencias finitas y demostraciones, lo cual será la base de la numeración de Gödel.
+
+
+
+\section{Numeración de Gödel}
+
+Hasta ahora hemos considerado, por un lado, la sintaxis de la teoría de Peano y, por otro, su interpretación semántica sobre los números naturales. El paso fundamental para demostrar los teoremas de incompletitud consiste en poder hablar de la propia teoría aritmética dentro del lenguaje de la aritmética. A este proceso se le denomina \emph{gödelización}.
+
+La idea general es asignar números naturales a símbolos, fórmulas y demostraciones, de forma que las expresiones formales puedan traducirse en códigos numéricos. 
+
+\paragraph{Primer problema: exponentes variables.}
+Aunque para cada exponente fijo \(k\) puede escribirse una fórmula que exprese \(x = p^k\) para un primo \(p\), la teoría de Peano no permite escribir directamente una fórmula de la forma
+\[
+\exists p \exists k \,(x = p^k),
+\]
+ya que esto requeriría cuantificar sobre exponentes arbitrarios y disponer de una noción interna de potenciación con exponente variable. La aritmética de Peano no contiene primitivamente una función de potencia, por lo que no puede expresar directamente este tipo de propiedades.
+
+\paragraph{Segundo problema: factorizaciones de longitud arbitraria.}
+
+De manera análoga, aunque es posible expresar propiedades como “\(x\) es primo” o “\(x\) es producto de dos primos”, no puede escribirse una fórmula que exprese que todo número mayor que uno se descompone como producto de una cantidad arbitraria (finita pero indeterminada) de números primos. 
+
+\paragraph{Tercer problema: sucesiones finitas de números naturales.}
+
+El obstáculo más general es que la aritmética de Peano no puede hablar directamente de sucesiones finitas arbitrarias de números naturales. Sin embargo, para poder codificar fórmulas y demostraciones es esencial poder representar listas finitas de símbolos, números o fórmulas dentro del propio lenguaje aritmético.
+
+\paragraph{Solución.}
+
+La solución de Gödel consiste en representar cualquier fórmula finita de números naturales mediante un único número natural. Para ello, se define una función inyectiva para identificar cada fórmula de nuestra teoría: 
+\[
+f:\,\mathbb{N}^3 \to \mathbb{N}, 
+\]
+\[(p,q,s) \mapsto 2^{p}3^{q}5^{s}.\]
+
+
+Si aplicamos recursivamente esta función, podemos codificar todas las expresiones utilizando las siguientes reglas: 
+
+\[
+\begin{array}{|c|c||c|c||c|c|}
+\hline
+\text{Símbolo} & \#\zeta & \tau & \#\tau & \varphi & \#\varphi \\
+\hline
+0 & 2^{0} & v_n & 2\cdot n + 3 & \tau_0 = \tau_1 & 2^{\#=} \cdot 3^{\#\tau_0} \cdot 5^{\#\tau_1} \\
+s & 2^{1} & st & 2^{\#s} \cdot 3^{\#t} & \neg \psi & 2^{\#\neg} \cdot 3^{\#\psi} \\
++ & 2^{2} & t_0 + t_1 & 2^{\#t_0} \cdot 3^{\#+} \cdot 5^{\#t_1} & \psi_0 \land \psi_1 & 2^{\#\land} \cdot 3^{\#\psi_0} \cdot 5^{\#\psi_1} \\
+\cdot & 2^{3} & t_0 \cdot t_1 & 2^{\#t_0} \cdot 3^{\#\cdot} \cdot 5^{\#t_1} & \psi_0 \lor \psi_1 & 2^{\#\lor} \cdot 3^{\#\psi_0} \cdot 5^{\#\psi_1} \\
+= & 2^{4} &  &  & \psi_0 \rightarrow \psi_1 & 2^{\#\rightarrow} \cdot 3^{\#\psi_0} \cdot 5^{\#\psi_1} \\
+\neg & 2^{5} &  &  & \exists x\,\psi & 2^{\#\exists} \cdot 3^{\#x} \cdot 5^{\#\psi} \\
+\land & 2^{6} &  &  & \forall x\,\psi & 2^{\#\forall} \cdot 3^{\#x} \cdot 5^{\#\psi} \\
+\lor & 2^{7} & & & & \\
+\rightarrow & 2^{8} &  &  &  &  \\
+\exists & 2^{9} &  &  &  &  \\
+\forall & 2^{10} &  &  &  &  \\
+\hline
+\end{array}
+\]
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+En esta tabla, $\tau$ y $\varphi$ se utilizan como \emph{meta-variables}.
+El símbolo $\tau$ denota un \emph{término} del lenguaje (por ejemplo, variables, constantes y expresiones formadas mediante los símbolos funcionales),
+mientras que $\varphi$ (y $\psi$) denota una \emph{fórmula}, es decir, una expresión con valor de verdad.
+\end{mdframed}
+
+Por ejemplo, dada una fórmula 
+\[ \varphi \equiv v_o = v_1 \land v_2,\]
+su número de Gödel es
+\[ \#\varphi \equiv 2^{16}\cdot3^3\cdot5^{2^5\cdot3^5\cdot5^7} \]
+
+De este modo, una sucesión finita de números queda representada por un único número natural, y las propiedades de dicha sucesión pueden traducirse en propiedades aritméticas de su código. 
+
+\smallskip
+
+Usaremos la notación
+\[
+\ulcorner \zeta \urcorner \;:\equiv\; \#\zeta,
+\]
+para denotar el número de Gödel del símbolo, término o fórmula $\zeta$.
+
+Con esta notación, se definen las siguientes funciones aritméticas, que
+construyen números de Gödel de expresiones compuestas:
+\begin{align*}
+\mathrm{suc}(n) &:\equiv 2^{\ulcorner s \urcorner} \cdot 3^{n},\\
+\mathrm{sum}(n,m) &:\equiv 2^{\ulcorner + \urcorner} \cdot 3^{n} \cdot 5^{m},\\
+\mathrm{mult}(n,m) &:\equiv 2^{\ulcorner \cdot \urcorner} \cdot 3^{n} \cdot 5^{m},\\
+\mathrm{ig}(t,t') &:\equiv 2^{\ulcorner = \urcorner} \cdot 3^{t} \cdot 5^{t'},\\
+\mathrm{not}(f) &:\equiv 2^{\ulcorner \neg \urcorner} \cdot 3^{f},\\
+\mathrm{and}(f,f') &:\equiv 2^{\ulcorner \wedge \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{or}(f,f') &:\equiv 2^{\ulcorner \vee \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{imp}(f,f') &:\equiv 2^{\ulcorner \rightarrow \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{ex}(v,f) &:\equiv 2^{\ulcorner \exists \urcorner} \cdot 3^{v} \cdot 5^{f},\\
+\mathrm{pt}(v,f) &:\equiv 2^{\ulcorner \forall \urcorner} \cdot 3^{v} \cdot 5^{f}.
+\end{align*}
+
+
+
+
+\section{Teoremas de Incompletitud de Gödel}
+
+\subsection{Lema de la diagonalización}
+
+\begin{theorem}[Lema de la diagonalización]
+Dada una $\varphi(\nu)$ una fórmula de \AP con una única variable libre que no está ligada en \( \varphi \), existe una única sentencia de \AP llamémosla \( \sigma_\varphi \) tal que: . Existe una sentencia $\sigma$ tal que:
+\[
+\sigma_\varphi \leftrightarrow_{\AP} \varphi(\ulcorner \sigma_\varphi \urcorner).
+\]
+\end{theorem}
+
+Este lema permite construir sentencias autorreferenciales mediante su propio número de Gödel, constituyendo la herramienta fundamental de los Teoremas de Incompletitud de Gödel.
+
+\subsection{Primer Teorema de Incompletitud}
+
+\begin{theorem}[Primer Teorema de Incompletitud]
+La \AP es incompleta.
+\end{theorem}
+
+\begin{proof}
+  Tomando \( \varphi(v_0) :\equiv \neg dem(v_0) \) en el lema de diagonalización sabemos que existe \( \sigma \) tal que: 
+  \[ \sigma \Leftrightarrow_{\AP} \neg dem(\ulcorner \sigma \urcorner) \]
+  Ahora, si asumimos, por reducción al absurdo, que \AP es completa, tenemos dos posibilidades: \begin{itemize}
+    \item Si \AP \(\; \vdash \sigma \), esto implica que \AP \(\; \vdash \neg dem(\ulcorner \sigma \urcorner) \). Además, se puede probar que también se verifica \AP \(\; \vdash dem(\ulcorner \sigma \urcorner) \). Es decir, \AP \(\; \vdash dem(\ulcorner \sigma \urcorner) \wedge \neg dem(\ulcorner \sigma \urcorner) \). 
+    \item Si \AP \(\; \vdash \neg \sigma \), esto implica que \( \AP \vdash \neg (\neg dem(\ulcorner \sigma \urcorner)) \), es decir, \AP \(\; \vdash \neg dem(\ulcorner \sigma \urcorner) \) y \( \mathbb{N} \models dem(\ulcorner \sigma \urcorner) \). Por tanto, tenemos \AP \(\; \vdash \sigma \), con lo cual \AP \( \sigma \wedge \neg \sigma \)
+  \end{itemize}
+  En conclusión, si \AP es consistente, entonces \AP \(\; \nvdash \sigma \)  y \AP \( \nvdash \neg \sigma \). Esto es, \AP es incompleta.
+\end{proof}
+
+En efecto, este teorema establece que ningún sistema formal consistente y lo suficiente expresivo como \AP puede demostrar todas las verdades aritméticas. La incompletitud surge al construir una sentencia \( \sigma \) que, mediante el lema de diagonalización, afirma su propia no demostrabilidad. Esto implica que, si \AP fuese capaz de decidir \( \sigma \), entonces generaría una contradicción, mostrando que la consistencia implica la existencia de sentencias indecibibles.
+
+\subsection{Segundo Teorema de Incompletitud}
+
+\begin{theorem}[Segundo Teorema de Incompletitud]
+La \AP no puede probar su propia consistencia.
+\end{theorem}
+
+\begin{proof}
+Por el lema de diagonalización, existe \( \sigma \) tal que 
+\[ \sigma \Leftrightarrow_{\AP} \neg dem(\ulcorner \sigma \urcorner) \]
+Asumimos que \AP \(\; \vdash \neg dem(\ulcorner \sigma \wedge \neg \sigma \urcorner) \), es decir, que \AP puede demostrar que no existe una demostración de una contradicción. Para llegar a una contradicción, veamos por un resultado previo que 
+\begin{align*}
+  (\dagger) \quad dem(\ulcorner \sigma \wedge \neg \sigma \urcorner) & \Leftrightarrow_{\AP} dem(\ulcorner \sigma \urcorner) \wedge \neg dem(\ulcorner \neg \sigma \urcorner)\\
+  & \Leftrightarrow_{\AP} dem(\ulcorner \sigma \urcorner) \wedge dem(\ulcorner dem(\ulcorner \sigma \urcorner) \urcorner)
+\end{align*}
+Usando una condición de derivabilidad de Hilbert-Bernays-Löb y la Tautología de «Introducción de la Conjunción bajo Antecedente Común» obtenemos 
+\[ \AP \vdash dem(\ulcorner \sigma \urcorner) \rightarrow (dem(\ulcorner \sigma \urcorner) \wedge dem(\ulcorner dem(\ulcorner \sigma \urcorner) \urcorner)) \]
+que junto al Axioma «Eliminación de la Conjunción» demuestra 
+\[ dem(\ulcorner \sigma \urcorner) \Leftrightarrow_{\AP} dem(\ulcorner \sigma \urcorner) \wedge dem(\ulcorner dem(\ulcorner \sigma \urcorner) \urcorner) \]
+De esta forma, volviendo a añadir la negación a \( (\dagger) \), obtenemos 
+\[ \neg dem(\ulcorner \sigma \wedge \neg \sigma \urcorner) \Leftrightarrow_{\AP} \neg dem(\ulcorner \sigma \urcorner) \Leftrightarrow_{\AP} \sigma \]
+donde, recordamos, la última equivalencia se da por el Lema de Diagonalización. Por lo tanto, lo que hemos asumido implica que \AP \(\; \vdash \sigma \). Sin embargo, hemos demostrado en el Primer Teorema de Incompletitud que \AP \( \nvdash \sigma \), lo cual es una contradicción.
+\end{proof}
+
+Intuitivamente, este teorema se desprende un hecho todavía más fuerte. A saber, aunque \AP sea consistente, el propio sistema no puede demostrar que sea consistente sin generar contradicciones. La demostración utiliza una sentencia autorreferencial construida por el Lema de Diagonalización y muestra que, si \AP pudiera probar su consistencia, también podría probar una sentencia que es indecidible por el Primer Teorema de Incompletitud.
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+Aunque el Segundo Teorema de Incompletitud afirma que \AP no puede probar su propia consistencia, la consistencia de \AP \emph{sí puede demostrarse desde un punto de vista externo}. Tal es el caso de usar el modelo estándar de \( \mathbb{N} \) donde cada axioma de \AP es verdadero, y si \AP no fuera consistente entonces algún axioma sería falso en \( \mathbb{N} \); o bien podríamos formalizar \AP dentro de la teoría de conjuntos ZFC (Zermelo-Fraenkel con Axioma de Elección, la utiliza en la matemática moderna).
+\end{mdframed}
+
+\section{Conclusión}
+
+En conclusión, los Teoremas de Incompletitud de Gödel muestran que cualquier sistema consistente y suficientemente expresivo, como la Aritmética de Peano, es incompleto y no puede demostrar su propia consistencia. En efecto, estas limitaciones son inherentes a la formalización de la aritmética y se extienden a otras teorías aritméticas con propiedades similares.
+\pagebreak
+
+\begin{thebibliography}{9}
+
+\bibitem{deBruijn1972}
+De Bruijn, N. G. (1972).
+\textit{Lambda calculus notation with nameless dummies, a tool for automatic formula manipulation, with application to the Church–Rosser theorem}.
+\textit{Indagationes Mathematicae (Proceedings), 75}(5), 381--392.
+https://doi.org/10.1016/1385-7258(72)90034-0
+
+\bibitem{venturini1984-reduction}
+Venturini Zilli, M. (1984).
+\textit{Reduction graphs in the lambda calculus}.
+\textit{Theoretical Computer Science, 29}(3), 251--275.
+https://doi.org/10.1016/0304-3975(84)90002-1
+
+\bibitem{hindley2008-cl}
+Hindley, J. R., \& Seldin, J. P. (2008).
+\textit{Lambda-calculus and combinators: An introduction} (2nd ed.).
+Cambridge University Press.
+(Secciones relevantes: Section 2C, \textit{Abstraction in CL}, pp.~26--29; Chapter 9, \textit{Correspondence between $\lambda$ and CL}, pp.~92--106.)
+
+\bibitem{garcia2023-godel}
+García López, J. (2023).
+\textit{Los teoremas de incompletitud de Gödel (Gödel’s Incompleteness Theorems)}.
+Trabajo de Fin de Grado, Grado en Matemáticas,
+Universidad de Cantabria.
+{https://hdl.handle.net/10902/29859}.
+
+
+
+\end{thebibliography}
+
+
+\end{document}
