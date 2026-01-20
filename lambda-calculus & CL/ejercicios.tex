@@ -859,9 +859,17 @@ Por tanto, dichas sentencias no son consecuencias semánticas universales y la c
 \end{mdframed}
 
 \section{Axiomática de Peano}
-
+Los teoremas de incompletitud de Gödel exigen una aritmética con suma, multiplicación y cuantificación sobre números para poder codificar fórmulas y demostraciones. Esto es exactamente lo que proporciona la axiomática de Peano, publicada en 1889 por Giuseppe Peano. 
 \subsection{Axiomas de Peano}
+En esta memoria se adopta la axiomatización de Peano en lógica de primer orden con símbolos: 
+\begin{description}
+  \item[$0)$] Símbolo de constante que llamaremos $0$.
+  \item[$s)$] Símbolo de una función de aridad $1$ que llamaremos sucesor.
+  \item[$+$)] Símbolo de una función de aridad $2$ que llamaremos suma.
+  \item[$\cdot)$] Símbolo de una función de aridad $2$ que llamaremos multiplicación.
+\end{description}
 
+La teoría \textbf{AP} está formada por los siguientes axiomas: 
 \begin{align*}
 \text{AP0: }& \neg \exists x,(s(x) = 0) \\
 \text{AP1: }& \forall x\forall y,(s(x) = s(y) \rightarrow x = y) \\
@@ -871,10 +879,151 @@ Por tanto, dichas sentencias no son consecuencias semánticas universales y la c
 \text{AP5: }& \forall x\forall y,(x \cdot s(y) = (x \cdot y) + x)
 \end{align*}
 
+\subsection{Aritmética y propiedades de AP}
+A partir de los axiomas de Peano, podemos definir nuevas constantes, funciones y relaciones. Interpretaremos las fórmulas aritméticas de la teoría de Peano en el sentido usual sobre los números naturales $\mathbb{N}$. Por ejemplo, podemos definir la relación de orden como: 
+\begin{align*}
+&x \leq y \iff \exists r\,(x+r = y),\\
+&x < y \iff x \leq y \land x \neq y,\\
+&x \geq y \iff y \leq x,\\
+&x > y \iff y < x.
+\end{align*}
 
-\subsection{Aritmética y propiedades de \AP}
+\begin{theorem}[Propiedades básicas del orden en \textbf{AP}]
+\label{thm:ordenAP}
+Se verifican en la teoría \textbf{AP} las siguientes propiedades del orden:
+\begin{enumerate}
+  \renewcommand{\labelenumi}{\alph{enumi})}
+  \item $\mathrm{AP} \vdash \forall x \,(x \leq x)$
+  \item $\mathrm{AP} \vdash \forall x \forall y \,((x \leq y \wedge y \leq x) \rightarrow x = y)$
+  \item $\mathrm{AP} \vdash \forall x \forall y \forall z \,((x \leq y \wedge y \leq z) \rightarrow (x \leq z))$
+  \item $\mathrm{AP} \vdash \forall x \,(0 \leq x)$
+  \item $\mathrm{AP} \vdash \forall x \forall y \,(x \leq y \vee y \leq x)$
+  \item $\mathrm{AP} \vdash \forall x \forall y \,(x < y \vee x = y \vee y < x)$
+  \item $\mathrm{AP} \vdash \forall x \forall y \forall z \,(x \leq y \rightarrow x + z \leq y + z)$
+\end{enumerate}
+\end{theorem}
 
-\section{La Función de Gödel}
+Además de las propiedades básicas del orden, la teoría \textbf{AP} permite formalizar y demostrar propiedades elementales de la suma y el producto que reflejan su comportamiento usual en los números naturales. En particular, dentro de \textbf{AP} se pueden demostrar, entre otras, las siguientes propiedades, cuya demostración es de poco interés en esta memoria por lo que hemos decidido omitirlas:
+
+\begin{itemize}
+\item Asociatividad de la suma:
+\[\textbf{AP} \vdash \forall x \forall y \forall z \,(x + (y + z) = (x + y) + z),\]
+  
+\item Propiedad cancelativa de la suma:
+\[\textbf{AP} \vdash \forall x \forall y \forall z \,(x + y = x + z \rightarrow y = z)\]
+
+\item Propiedades de las fórmulas de desigualdad: 
+\[\textbf{AP} \vdash \forall x \forall y (x < sy \leftrightarrow x \leq = y)\]
+\[\textbf{AP} \vdash \forall x \forall y (x < y \leftrightarrow sx \leq = y)\]
+\item Propiedades de la divisibilidad:
+\[\textbf{AP} \vdash \forall x \forall y \forall z \leq y (x \mid y \land x \mid z \rightarrow \mid y \pm z)\]
+\[\textbf{AP} \vdash \forall x \forall y \forall z (x \mid y\rightarrow x \mid yz)\]
+\end{itemize}
+En la demostración de los teoremas también está implícito el concepto de coprimalidad: 
+
+\[\textbf{AP} \vdash \forall x \forall y \forall k \,(k \mid x \land coprimos(x,y) \rightarrow (k, y))\]
+\[\textbf{AP} \vdash \forall k \forall y \neq 0\forall j \,(k \mid y \rightarrow coprimos(1 + (j + k)y, 1 + jy\]
+\[\textbf{AP} \vdash \forall x \forall y (coprimos(x,y) \leftrightarrow (x \neq 0 \land y \neq 0 \land \forall z ((z \mid x \land z \mid y) \rightarrow z = 1)))\]
+
+La codificación aritmética utilizada en la numeración de Gödel se basa en la construccion de múltiplos comunes: 
+
+\[\textbf{AP} \vdash \forall m \exists y \forall k ((k \neq 0 \land k \leq m ) \rightarrow k \mid y) \]
+
+Finalmente, veamos como podemos definir funciones en \textbf{AP} mediante fórmulas. Diremos que una función
+\[
+F(x_1,\dots,x_n) = y \;\;:\Longleftrightarrow\;\; \varphi(x_1,\dots,x_n,y)
+\]
+es \emph{definible en \textbf{AP}} si existe una fórmula \(\varphi\) tal que, para cada elección de los argumentos \(x_1,\dots,x_n\), existe un único valor \(y\) que satisface \(\varphi(x_1,\dots,x_n,y)\).  
+En este caso diremos que \(\varphi\) es funcional.
+
+Este concepto permite construir el máximo de un dominio finito de una función definible en  \textbf{AP}  como expresa el siguiente resultado. 
+
+Sea \(F\) una función definible en \textbf{AP}. Entonces:
+
+\[\textbf{AP} \vdash \forall k > 0 \exists !x(\exists i < k (F(i) = x) \land \forall j < k (F(j) \leq x)) \]
+
+Las propiedades anteriores garantizan que la teoría \textbf{AP} reproduce internamente el comportamiento aritmético habitual de los números naturales. Este hecho es esencial para poder definir, dentro de la propia teoría, funciones y relaciones aritméticas para codificar fórmulas, secuencias finitas y demostraciones, lo cual será la base de la numeración de Gödel.
+
+
+
+\section{Numeración de Gödel}
+
+Hasta ahora hemos considerado, por un lado, la sintaxis de la teoría de Peano y, por otro, su interpretación semántica sobre los números naturales. El paso fundamental para demostrar los teoremas de incompletitud consiste en poder hablar de la propia teoría aritmética dentro del lenguaje de la aritmética. A este proceso se le denomina \emph{gödelización}.
+
+La idea general es asignar números naturales a símbolos, fórmulas y demostraciones, de forma que las expresiones formales puedan traducirse en códigos numéricos. 
+
+\paragraph{Primer problema: exponentes variables.}
+Aunque para cada exponente fijo \(k\) puede escribirse una fórmula que exprese \(x = p^k\) para un primo \(p\), la teoría de Peano no permite escribir directamente una fórmula de la forma
+\[
+\exists p \exists k \,(x = p^k),
+\]
+ya que esto requeriría cuantificar sobre exponentes arbitrarios y disponer de una noción interna de potenciación con exponente variable. La aritmética de Peano no contiene primitivamente una función de potencia, por lo que no puede expresar directamente este tipo de propiedades.
+
+\paragraph{Segundo problema: factorizaciones de longitud arbitraria.}
+De manera análoga, aunque es posible expresar propiedades como “\(x\) es primo” o “\(x\) es producto de dos primos”, no puede escribirse una fórmula que exprese que todo número mayor que uno se descompone como producto de una cantidad arbitraria (finita pero indeterminada) de números primos. 
+
+\paragraph{Tercer problema: sucesiones finitas de números naturales.}
+El obstáculo más general es que la aritmética de Peano no puede hablar directamente de sucesiones finitas arbitrarias de números naturales. Sin embargo, para poder codificar fórmulas y demostraciones es esencial poder representar listas finitas de símbolos, números o fórmulas dentro del propio lenguaje aritmético.
+
+\paragraph{Solucion}La solución de Gödel consiste en representar cualquier fórmula finita de números naturales mediante un único número natural. Para ello, se define una función inyectiva para identificar cada fórmula de nuestra teoría: 
+\[
+f:\,\mathbb{N}^3 \to \mathbb{N}, 
+\]
+\[(p,q,s) \mapsto 2^{p}3^{q}5^{s}.\]
+
+
+Si aplicamos recursivamente esta función, podemos codificar todas las expresiones utilizando las siguientes reglas: 
+
+\[
+\begin{array}{|c|c||c|c||c|c|}
+\hline
+\text{Símbolo} & \#\zeta & \tau & \#\tau & \varphi & \#\varphi \\
+\hline
+0 & 2^{0} & v_n & 2\cdot n + 3 & \tau_0 = \tau_1 & 2^{\#=} \cdot 3^{\#\tau_0} \cdot 5^{\#\tau_1} \\
+s & 2^{1} & st & 2^{\#s} \cdot 3^{\#t} & \neg \varphi & 2^{\#\neg} \cdot 3^{\#\varphi} \\
++ & 2^{2} & t_0 + t_1 & 2^{\#t_0} \cdot 3^{\#+} \cdot 5^{\#t_1} & \varphi_0 \land \varphi_1 & 2^{\#\land} \cdot 3^{\#\varphi_0} \cdot 5^{\#\varphi_1} \\
+\cdot & 2^{3} & t_0 \cdot t_1 & 2^{\#t_0} \cdot 3^{\#\cdot} \cdot 5^{\#t_1} & \varphi_0 \lor \varphi_1 & 2^{\#\lor} \cdot 3^{\#\varphi_0} \cdot 5^{\#\varphi_1} \\
+= & 2^{4} &  &  & \varphi_0 \rightarrow \varphi_1 & 2^{\#\rightarrow} \cdot 3^{\#\varphi_0} \cdot 5^{\#\varphi_1} \\
+\land & 2^{5} &  &  & \exists x\,\varphi & 2^{\#\exists} \cdot 3^{\#x} \cdot 5^{\#\varphi} \\
+\lor & 2^{6} &  &  & \forall x\,\varphi & 2^{\#\forall} \cdot 3^{\#x} \cdot 5^{\#\varphi} \\
+\rightarrow & 2^{7} &  &  &  &  \\
+\exists & 2^{8} &  &  &  &  \\
+\forall & 2^{9} &  &  &  &  \\
+\hline
+\end{array}
+\]
+
+Por ejemplo, dada una fórmula 
+\[ \varphi \equiv v_o = v_1 \land v_2,\]
+su número de Gödel es
+\[ \#\varphi \equiv 2^{16}\cdot3^3\cdot5^{2^5\cdot3^5\cdot5^7} \]
+
+De este modo, una sucesión finita de números queda representada por un único número natural, y las propiedades de dicha sucesión pueden traducirse en propiedades aritméticas de su código. 
+
+\smallskip
+
+Usaremos la notación
+\[
+\ulcorner \zeta \urcorner \;:\!\equiv\; \#\zeta,
+\]
+para denotar el número de Gödel del símbolo, término o fórmula $\zeta$.
+
+Con esta notación, se definen las siguientes funciones aritméticas, que
+construyen números de Gödel de expresiones compuestas:
+\begin{align*}
+\mathrm{suc}(n) &:\!\equiv 2^{\ulcorner s \urcorner} \cdot 3^{n},\\
+\mathrm{sum}(n,m) &:\!\equiv 2^{\ulcorner + \urcorner} \cdot 3^{n} \cdot 5^{m},\\
+\mathrm{mult}(n,m) &:\!\equiv 2^{\ulcorner \cdot \urcorner} \cdot 3^{n} \cdot 5^{m},\\
+\mathrm{ig}(t,t') &:\!\equiv 2^{\ulcorner = \urcorner} \cdot 3^{t} \cdot 5^{t'},\\
+\mathrm{not}(f) &:\!\equiv 2^{\ulcorner \neg \urcorner} \cdot 3^{f},\\
+\mathrm{and}(f,f') &:\!\equiv 2^{\ulcorner \wedge \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{or}(f,f') &:\!\equiv 2^{\ulcorner \vee \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{imp}(f,f') &:\!\equiv 2^{\ulcorner \rightarrow \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{ex}(v,f) &:\!\equiv 2^{\ulcorner \exists \urcorner} \cdot 3^{v} \cdot 5^{f},\\
+\mathrm{pt}(v,f) &:\!\equiv 2^{\ulcorner \forall \urcorner} \cdot 3^{v} \cdot 5^{f}.
+\end{align*}
+
+
 
 
 \section{Teoremas de Incompletitud de Gödel}
