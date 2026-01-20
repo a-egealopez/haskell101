@@ -889,17 +889,16 @@ A partir de los axiomas de Peano, podemos definir nuevas constantes, funciones y
 \end{align*}
 
 \begin{theorem}[Propiedades básicas del orden en \textbf{AP}]
-\label{thm:ordenAP}
 Se verifican en la teoría \textbf{AP} las siguientes propiedades del orden:
 \begin{enumerate}
   \renewcommand{\labelenumi}{\alph{enumi})}
-  \item $\mathrm{AP} \vdash \forall x \,(x \leq x)$
-  \item $\mathrm{AP} \vdash \forall x \forall y \,((x \leq y \wedge y \leq x) \rightarrow x = y)$
-  \item $\mathrm{AP} \vdash \forall x \forall y \forall z \,((x \leq y \wedge y \leq z) \rightarrow (x \leq z))$
-  \item $\mathrm{AP} \vdash \forall x \,(0 \leq x)$
-  \item $\mathrm{AP} \vdash \forall x \forall y \,(x \leq y \vee y \leq x)$
-  \item $\mathrm{AP} \vdash \forall x \forall y \,(x < y \vee x = y \vee y < x)$
-  \item $\mathrm{AP} \vdash \forall x \forall y \forall z \,(x \leq y \rightarrow x + z \leq y + z)$
+  \item $\mathbf{AP} \vdash \forall x \,(x \leq x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \,((x \leq y \wedge y \leq x) \rightarrow x = y)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \forall z \,((x \leq y \wedge y \leq z) \rightarrow (x \leq z))$
+  \item $\mathbf{AP} \vdash \forall x \,(0 \leq x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \,(x \leq y \vee y \leq x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \,(x < y \vee x = y \vee y < x)$
+  \item $\mathbf{AP} \vdash \forall x \forall y \forall z \,(x \leq y \rightarrow x + z \leq y + z)$
 \end{enumerate}
 \end{theorem}
 
@@ -912,18 +911,22 @@ Además de las propiedades básicas del orden, la teoría \textbf{AP} permite fo
 \item Propiedad cancelativa de la suma:
 \[\textbf{AP} \vdash \forall x \forall y \forall z \,(x + y = x + z \rightarrow y = z)\]
 
-\item Propiedades de las fórmulas de desigualdad: 
-\[\textbf{AP} \vdash \forall x \forall y (x < sy \leftrightarrow x \leq = y)\]
-\[\textbf{AP} \vdash \forall x \forall y (x < y \leftrightarrow sx \leq = y)\]
-\item Propiedades de la divisibilidad:
-\[\textbf{AP} \vdash \forall x \forall y \forall z \leq y (x \mid y \land x \mid z \rightarrow \mid y \pm z)\]
-\[\textbf{AP} \vdash \forall x \forall y \forall z (x \mid y\rightarrow x \mid yz)\]
+\item Propiedades de las fórmulas de desigualdad: \begin{align*}
+  & \textbf{AP} \vdash \forall x \forall y (x < sy \leftrightarrow x \leq y) \\
+  & \textbf{AP} \vdash \forall x \forall y (x < y \leftrightarrow sx \leq y) \\
+\end{align*}
+\item Propiedades de la divisibilidad: \begin{align*}
+  & \textbf{AP} \vdash \forall x \forall y \forall z \leq y (x \mid y \land x \mid z \rightarrow x \mid y \pm z) \\
+  & \textbf{AP} \vdash \forall x \forall y \forall z (x \mid y\rightarrow x \mid yz)
+\end{align*}
 \end{itemize}
 En la demostración de los teoremas también está implícito el concepto de coprimalidad: 
 
-\[\textbf{AP} \vdash \forall x \forall y \forall k \,(k \mid x \land coprimos(x,y) \rightarrow (k, y))\]
-\[\textbf{AP} \vdash \forall k \forall y \neq 0\forall j \,(k \mid y \rightarrow coprimos(1 + (j + k)y, 1 + jy\]
-\[\textbf{AP} \vdash \forall x \forall y (coprimos(x,y) \leftrightarrow (x \neq 0 \land y \neq 0 \land \forall z ((z \mid x \land z \mid y) \rightarrow z = 1)))\]
+\begin{align*}
+  & \textbf{AP} \vdash \forall x \forall y \forall k \,(k \mid x \land coprimos(x,y) \rightarrow coprimos(k, y)) \\
+  & \textbf{AP} \vdash \forall k \forall y \neq 0\forall j \,(k \mid y \rightarrow coprimos(1 + (j + k)y, 1 + jy)) \\
+  & \textbf{AP} \vdash \forall x \forall y (coprimos(x,y) \leftrightarrow (x \neq 0 \land y \neq 0 \land \forall z ((z \mid x \land z \mid y) \rightarrow z = 1)))
+\end{align*}
 
 La codificación aritmética utilizada en la numeración de Gödel se basa en la construccion de múltiplos comunes: 
 
@@ -960,12 +963,16 @@ Aunque para cada exponente fijo \(k\) puede escribirse una fórmula que exprese 
 ya que esto requeriría cuantificar sobre exponentes arbitrarios y disponer de una noción interna de potenciación con exponente variable. La aritmética de Peano no contiene primitivamente una función de potencia, por lo que no puede expresar directamente este tipo de propiedades.
 
 \paragraph{Segundo problema: factorizaciones de longitud arbitraria.}
+
 De manera análoga, aunque es posible expresar propiedades como “\(x\) es primo” o “\(x\) es producto de dos primos”, no puede escribirse una fórmula que exprese que todo número mayor que uno se descompone como producto de una cantidad arbitraria (finita pero indeterminada) de números primos. 
 
 \paragraph{Tercer problema: sucesiones finitas de números naturales.}
+
 El obstáculo más general es que la aritmética de Peano no puede hablar directamente de sucesiones finitas arbitrarias de números naturales. Sin embargo, para poder codificar fórmulas y demostraciones es esencial poder representar listas finitas de símbolos, números o fórmulas dentro del propio lenguaje aritmético.
 
-\paragraph{Solucion}La solución de Gödel consiste en representar cualquier fórmula finita de números naturales mediante un único número natural. Para ello, se define una función inyectiva para identificar cada fórmula de nuestra teoría: 
+\paragraph{Solución.}
+
+La solución de Gödel consiste en representar cualquier fórmula finita de números naturales mediante un único número natural. Para ello, se define una función inyectiva para identificar cada fórmula de nuestra teoría: 
 \[
 f:\,\mathbb{N}^3 \to \mathbb{N}, 
 \]
@@ -980,18 +987,25 @@ Si aplicamos recursivamente esta función, podemos codificar todas las expresion
 \text{Símbolo} & \#\zeta & \tau & \#\tau & \varphi & \#\varphi \\
 \hline
 0 & 2^{0} & v_n & 2\cdot n + 3 & \tau_0 = \tau_1 & 2^{\#=} \cdot 3^{\#\tau_0} \cdot 5^{\#\tau_1} \\
-s & 2^{1} & st & 2^{\#s} \cdot 3^{\#t} & \neg \varphi & 2^{\#\neg} \cdot 3^{\#\varphi} \\
-+ & 2^{2} & t_0 + t_1 & 2^{\#t_0} \cdot 3^{\#+} \cdot 5^{\#t_1} & \varphi_0 \land \varphi_1 & 2^{\#\land} \cdot 3^{\#\varphi_0} \cdot 5^{\#\varphi_1} \\
-\cdot & 2^{3} & t_0 \cdot t_1 & 2^{\#t_0} \cdot 3^{\#\cdot} \cdot 5^{\#t_1} & \varphi_0 \lor \varphi_1 & 2^{\#\lor} \cdot 3^{\#\varphi_0} \cdot 5^{\#\varphi_1} \\
-= & 2^{4} &  &  & \varphi_0 \rightarrow \varphi_1 & 2^{\#\rightarrow} \cdot 3^{\#\varphi_0} \cdot 5^{\#\varphi_1} \\
-\land & 2^{5} &  &  & \exists x\,\varphi & 2^{\#\exists} \cdot 3^{\#x} \cdot 5^{\#\varphi} \\
-\lor & 2^{6} &  &  & \forall x\,\varphi & 2^{\#\forall} \cdot 3^{\#x} \cdot 5^{\#\varphi} \\
-\rightarrow & 2^{7} &  &  &  &  \\
-\exists & 2^{8} &  &  &  &  \\
-\forall & 2^{9} &  &  &  &  \\
+s & 2^{1} & st & 2^{\#s} \cdot 3^{\#t} & \neg \psi & 2^{\#\neg} \cdot 3^{\#\psi} \\
++ & 2^{2} & t_0 + t_1 & 2^{\#t_0} \cdot 3^{\#+} \cdot 5^{\#t_1} & \psi_0 \land \psi_1 & 2^{\#\land} \cdot 3^{\#\psi_0} \cdot 5^{\#\psi_1} \\
+\cdot & 2^{3} & t_0 \cdot t_1 & 2^{\#t_0} \cdot 3^{\#\cdot} \cdot 5^{\#t_1} & \psi_0 \lor \psi_1 & 2^{\#\lor} \cdot 3^{\#\psi_0} \cdot 5^{\#\psi_1} \\
+= & 2^{4} &  &  & \psi_0 \rightarrow \psi_1 & 2^{\#\rightarrow} \cdot 3^{\#\psi_0} \cdot 5^{\#\psi_1} \\
+\neg & 2^{5} &  &  & \exists x\,\psi & 2^{\#\exists} \cdot 3^{\#x} \cdot 5^{\#\psi} \\
+\land & 2^{6} &  &  & \forall x\,\psi & 2^{\#\forall} \cdot 3^{\#x} \cdot 5^{\#\psi} \\
+\lor & 2^{7} & & & & \\
+\rightarrow & 2^{8} &  &  &  &  \\
+\exists & 2^{9} &  &  &  &  \\
+\forall & 2^{10} &  &  &  &  \\
 \hline
 \end{array}
 \]
+
+\begin{mdframed}[linewidth=1pt, backgroundcolor=gray!10, roundcorner=5pt]
+En esta tabla, $\tau$ y $\varphi$ se utilizan como \emph{meta-variables}.
+El símbolo $\tau$ denota un \emph{término} del lenguaje (por ejemplo, variables, constantes y expresiones formadas mediante los símbolos funcionales),
+mientras que $\varphi$ (y $\psi$) denota una \emph{fórmula}, es decir, una expresión con valor de verdad.
+\end{mdframed}
 
 Por ejemplo, dada una fórmula 
 \[ \varphi \equiv v_o = v_1 \land v_2,\]
@@ -1004,23 +1018,23 @@ De este modo, una sucesión finita de números queda representada por un único 
 
 Usaremos la notación
 \[
-\ulcorner \zeta \urcorner \;:\!\equiv\; \#\zeta,
+\ulcorner \zeta \urcorner \;:\equiv\; \#\zeta,
 \]
 para denotar el número de Gödel del símbolo, término o fórmula $\zeta$.
 
 Con esta notación, se definen las siguientes funciones aritméticas, que
 construyen números de Gödel de expresiones compuestas:
 \begin{align*}
-\mathrm{suc}(n) &:\!\equiv 2^{\ulcorner s \urcorner} \cdot 3^{n},\\
-\mathrm{sum}(n,m) &:\!\equiv 2^{\ulcorner + \urcorner} \cdot 3^{n} \cdot 5^{m},\\
-\mathrm{mult}(n,m) &:\!\equiv 2^{\ulcorner \cdot \urcorner} \cdot 3^{n} \cdot 5^{m},\\
-\mathrm{ig}(t,t') &:\!\equiv 2^{\ulcorner = \urcorner} \cdot 3^{t} \cdot 5^{t'},\\
-\mathrm{not}(f) &:\!\equiv 2^{\ulcorner \neg \urcorner} \cdot 3^{f},\\
-\mathrm{and}(f,f') &:\!\equiv 2^{\ulcorner \wedge \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
-\mathrm{or}(f,f') &:\!\equiv 2^{\ulcorner \vee \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
-\mathrm{imp}(f,f') &:\!\equiv 2^{\ulcorner \rightarrow \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
-\mathrm{ex}(v,f) &:\!\equiv 2^{\ulcorner \exists \urcorner} \cdot 3^{v} \cdot 5^{f},\\
-\mathrm{pt}(v,f) &:\!\equiv 2^{\ulcorner \forall \urcorner} \cdot 3^{v} \cdot 5^{f}.
+\mathrm{suc}(n) &:\equiv 2^{\ulcorner s \urcorner} \cdot 3^{n},\\
+\mathrm{sum}(n,m) &:\equiv 2^{\ulcorner + \urcorner} \cdot 3^{n} \cdot 5^{m},\\
+\mathrm{mult}(n,m) &:\equiv 2^{\ulcorner \cdot \urcorner} \cdot 3^{n} \cdot 5^{m},\\
+\mathrm{ig}(t,t') &:\equiv 2^{\ulcorner = \urcorner} \cdot 3^{t} \cdot 5^{t'},\\
+\mathrm{not}(f) &:\equiv 2^{\ulcorner \neg \urcorner} \cdot 3^{f},\\
+\mathrm{and}(f,f') &:\equiv 2^{\ulcorner \wedge \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{or}(f,f') &:\equiv 2^{\ulcorner \vee \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{imp}(f,f') &:\equiv 2^{\ulcorner \rightarrow \urcorner} \cdot 3^{f} \cdot 5^{f'},\\
+\mathrm{ex}(v,f) &:\equiv 2^{\ulcorner \exists \urcorner} \cdot 3^{v} \cdot 5^{f},\\
+\mathrm{pt}(v,f) &:\equiv 2^{\ulcorner \forall \urcorner} \cdot 3^{v} \cdot 5^{f}.
 \end{align*}
 
 
